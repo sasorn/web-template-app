@@ -1,0 +1,74 @@
+.InputToggle {
+  width: auto !important;
+
+  label {
+    position: relative;
+    display: inline-block;
+    height: 28px;
+    width: 64px;
+
+    span {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #bdb8b2;
+      box-shadow: inset 0px 1px 4px rgba(0, 0, 0, 0.08);
+      -webkit-transition: 0.1s;
+      transition: 0.1s;
+      border-radius: 34px;
+
+      &:before {
+        position: absolute;
+        content: "";
+        width: 39px;
+        height: 24px;
+        opacity: 1;
+        top: 2px;
+        left: 2px;
+        border-radius: 25px;
+        background-color: #fff;
+        -webkit-transition: 0.1s;
+        transition: 0.1s;
+      }
+    }
+
+    input {
+      display: none;
+    }
+  }
+
+  &.checked {
+    > label {
+      > span {
+        background-color: rgba(18, 56, 45, 1);
+
+        &:before {
+          -webkit-transform: translateX(26px);
+          -ms-transform: translateX(26px);
+          transform: translateX(26px);
+          left: -4px;
+        }
+      }
+    }
+  }
+
+  &.error {
+    label {
+      span {
+        background-color: #ff9c9c;
+      }
+    }
+  }
+
+  &--disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+
+    label {
+      pointer-events: none;
+    }
+  }
+}

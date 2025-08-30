@@ -1,0 +1,253 @@
+.RichTextEditor {
+  &-container {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  &-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px;
+    border-bottom: 1px solid #e5e7eb;
+    background-color: #f9fafb;
+  }
+
+  &-select {
+    padding: 6px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: #ffffff;
+    font-size: 14px;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+    min-width: 120px;
+  }
+
+  &-button {
+    padding: 6px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: #ffffff;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    outline: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+  }
+
+  &-button:hover {
+    background-color: #f3f4f6;
+    border-color: #9ca3af;
+  }
+
+  &-editor {
+    padding: 16px;
+    min-height: 160px; /* replace with your "height" variable */
+    max-height: 600px;
+    overflow-y: auto;
+    outline: none;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #1f2937;
+    position: relative;
+
+    &.empty:before {
+      content: attr(data-placeholder);
+      color: #9ca3af;
+      pointer-events: none;
+      position: absolute;
+      margin: 1em 0;
+    }
+  }
+
+  &-hiddenInput {
+    display: none;
+  }
+
+  &-colorPicker {
+    position: relative;
+    display: inline-block;
+    margin-right: 8px;
+  }
+
+  &-colorButton {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    min-width: 30px;
+
+    &:hover {
+      background: #f5f5f5;
+      border-color: #999;
+    }
+  }
+
+  &-dropdown {
+    position: relative;
+    display: inline-block;
+    margin-right: 8px;
+  }
+
+  &-dropdownButton {
+    padding: 6px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: #ffffff;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 120px;
+    gap: 8px;
+
+    &:hover {
+      background-color: #f3f4f6;
+      border-color: #9ca3af;
+    }
+  }
+
+  &-dropdownArrow {
+    font-size: 10px;
+    transition: transform 0.2s;
+    color: #6b7280;
+
+    &.open {
+      transform: rotate(180deg);
+    }
+  }
+
+  &-dropdownMenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin-top: 4px;
+    overflow: hidden;
+  }
+
+  &-dropdownItem {
+    width: 100%;
+    padding: 8px 12px;
+    border: none;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: left;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #f3f4f6;
+    }
+
+    &.selected {
+      background-color: #eff6ff;
+      color: #2563eb;
+      font-weight: 500;
+    }
+  }
+
+  // Color picker styles
+  &-colorPicker {
+    position: relative;
+    display: inline-block;
+    margin-right: 8px;
+  }
+
+  &-colorButton {
+    background: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    min-width: 32px;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #f3f4f6;
+      border-color: #9ca3af;
+    }
+  }
+
+  &-colorGrid {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 1px;
+    width: 210px;
+    margin-top: 4px;
+  }
+
+  &-colorSwatch {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    border: 0 none;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.1s ease;
+
+    &:hover {
+      transform: scale(1.1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    // Special styling for white color swatch
+    &[style*="rgb(255, 255, 255)"],
+    &[style*="#ffffff"],
+    &[style*="#FFFFFF"] {
+      border-color: #ccc;
+    }
+  }
+
+  &-colorPicker {
+    position: relative;
+    display: inline-block;
+    margin-right: 8px;
+  }
+
+  &-colorButton {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    min-width: 30px;
+
+    &:hover {
+      background: #f5f5f5;
+      border-color: #999;
+    }
+  }
+}

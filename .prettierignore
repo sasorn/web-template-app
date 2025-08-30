@@ -1,0 +1,6 @@
+/coverage
+/vendor
+/dist
+/public
+/storybook-static
+/node_modules

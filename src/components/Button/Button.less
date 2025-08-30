@@ -1,0 +1,115 @@
+@import url(../../views/liquid-glass.less);
+
+.Button {
+  padding: 0 30px;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--text-invert-color);
+  border: 1px solid var(--primary-color);
+  background-color: var(--primary-color);
+  border-radius: 8px;
+  letter-spacing: 0;
+  outline: 0;
+  min-height: 48px;
+  cursor: pointer;
+  box-shadow: var(--box-shadow);
+  transition: all 0.3s ease;
+
+  &.rounded {
+    border-radius: 25px;
+  }
+
+  &.ghost {
+    color: var(--primary-color);
+    background-color: transparent;
+    border-color: var(--primary-color);
+  }
+
+  &.dark {
+    background-color: var(--button-dark);
+    border-color: var(--button-dark);
+  }
+
+  &.critical {
+    background-color: var(--button-critical);
+    border-color: var(--button-critical);
+  }
+
+  &:hover {
+    color: var(--text-invert-color);
+    border-color: var(--button-hover);
+    background-color: var(--button-hover);
+  }
+
+  &:active {
+    color: var(--text-invert-color);
+    border-color: var(--button-active);
+    background-color: var(--button-active);
+  }
+
+  &:disabled {
+    background-color: var(--button-disabled);
+    border-color: var(--button-disabled);
+    pointer-events: none;
+  }
+
+  &.link {
+    color: var(--primary-color);
+    border-color: transparent;
+    background-color: transparent;
+    box-shadow: none;
+
+    &:hover {
+      color: var(--button-hover);
+    }
+
+    &:disabled {
+      color: var(--button-disabled);
+    }
+  }
+
+  // &.small {
+  //   padding: 0 20px;
+  //   font-size: 12px;
+  //   line-height: 30px;
+  //   font-weight: 600;
+  // }
+
+  // &.large {
+  //   padding: 10px 40px;
+  //   font-size: 20px;
+  //   line-height: 30px;
+  // }
+
+  // &.warning {
+  //   border: none;
+  //   background-color: #ff8602;
+
+  //   &:hover {
+  //     background-color: #ff9b2f;
+  //     border-color: #ff9b2f;
+  //   }
+
+  //   &:active {
+  //     background-color: #d7750a;
+  //     border-color: #d7750a;
+  //   }
+  // }
+
+  // &.critical {
+  //   border: none;
+  //   background-color: #d20019;
+
+  //   &:hover {
+  //     background-color: #f0001e;
+  //     border-color: #f0001e;
+  //   }
+
+  //   &:active {
+  //     background-color: #b40014;
+  //     border-color: #b40014;
+  //   }
+  // }
+}

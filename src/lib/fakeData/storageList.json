@@ -1,0 +1,32 @@
+{
+  "partners": [
+    {
+      "name": "Big Yellow",
+      "image": "https://uxss.in/krspit.com/cdn/mover/assets/storage/bigyellow.png",
+      "description": "Self Storage",
+      "logoColor": "#ff6600",
+      "locationCount": 54
+    },
+    {
+      "name": "Shurgard",
+      "image": "https://uxss.in/krspit.com/cdn/mover/assets/storage/shurgard.png",
+      "description": "Self Storage",
+      "logoColor": "#40ba5a",
+      "locationCount": 158
+    },
+    {
+      "name": "Access",
+      "image": "https://uxss.in/krspit.com/cdn/mover/assets/storage/access.png",
+      "description": "Self Storage",
+      "logoColor": "#df161c",
+      "locationCount": 14
+    },
+    {
+      "name": "SafeStore",
+      "image": "https://uxss.in/krspit.com/cdn/mover/assets/storage/safestore.png",
+      "description": "Self Storage",
+      "logoColor": "#eef2f2",
+      "locationCount": 26
+    }
+  ]
+}

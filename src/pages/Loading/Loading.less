@@ -1,0 +1,16 @@
+.Loading {
+  // TODO: Ensure hardcoding 60px here doesn't break appearance on production
+  display: flex;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  right: 0;
+  bottom: 60px;
+  justify-content: center;
+  align-items: center;
+
+  &.loading {
+    position: relative;
+    height: calc(100svh - 260px);
+  }
+}

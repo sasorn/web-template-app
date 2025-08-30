@@ -1,0 +1,254 @@
+.MainMenu {
+  width: 100px;
+  max-width: 100px;
+  height: 100svh;
+  min-height: 100svh;
+  max-height: 100svh;
+  position: relative;
+  z-index: 99999999999999999999;
+
+  &-container {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 12px 0;
+    width: 100px;
+    transition: width 0.3s ease;
+    background:
+      linear-gradient(0deg, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.03)),
+      rgba(255, 255, 255, 0.75);
+    background-blend-mode: normal, plus-lighter;
+    box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(5px);
+
+    &.active {
+      background-color: #fff;
+      width: 320px;
+    }
+  }
+
+  &-items {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    &.bottom {
+      > div {
+        margin-bottom: 20px;
+      }
+    }
+  }
+
+  &-item {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: nowrap;
+    height: 48px;
+    line-height: 48px;
+    max-width: 100px;
+    transition: max-width 0.3s ease;
+
+    > div {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      opacity: 0;
+      max-width: 0;
+      transition:
+        max-width 0.3s ease,
+        opacity 0.3s ease;
+    }
+
+    &.show {
+      max-width: 320px;
+
+      > div {
+        opacity: 1;
+        max-width: fit-content;
+      }
+    }
+
+    &.logo {
+      padding: 22px;
+      height: 25px;
+      line-height: 0;
+
+      img {
+        height: 25px;
+        margin-left: 8px;
+      }
+
+      &.show {
+        gap: 12px;
+      }
+    }
+
+    &.dashboard {
+      background-color: var(--background-primary-color);
+      color: var(--text-button-color);
+      border-radius: 25px;
+      height: 48px;
+      max-height: 48px;
+      width: 100%;
+      max-width: 48px;
+      min-height: 48px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 12px auto;
+      cursor: pointer;
+
+      > div {
+        max-width: 0;
+        opacity: 0;
+        transition:
+          max-width 0.3s ease,
+          opacity 0.3s ease;
+      }
+
+      img {
+        flex-shrink: 0;
+        width: 24px;
+        height: 24px;
+      }
+
+      &.show {
+        max-width: 272px;
+
+        > div {
+          max-width: fit-content; /* or whatever width you want */
+          opacity: 1;
+        }
+      }
+    }
+
+    &.account,
+    &.integration,
+    &.templates,
+    &.help,
+    &.settings,
+    &.logout {
+      border-left: 3px solid transparent;
+      min-height: 48px;
+      max-height: 48px;
+      gap: 12px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--hover-color);
+      }
+
+      img {
+        flex-shrink: 0;
+        width: 24px;
+        height: 24px;
+        margin-left: 33px;
+        transition: margin 0.3s ease;
+      }
+
+      &.show {
+        img {
+          margin-left: 21px;
+        }
+      }
+
+      &.active {
+        border-color: var(--background-secondary-color);
+        background-color: var(--hover-color);
+      }
+    }
+
+    &.profile {
+      min-height: 48px;
+      max-height: 48px;
+      gap: 12px;
+
+      img {
+        margin-left: 24px;
+        height: 48px;
+        min-height: 48px;
+        width: 48px;
+        min-width: 48px;
+        display: block;
+        border-radius: 25px;
+        overflow: hidden;
+      }
+
+      > span > {
+        height: 48px;
+        width: 48px;
+        display: block;
+        position: relative;
+        margin-left: 24px;
+
+        img {
+          margin-left: 0;
+        }
+
+        > span {
+          height: 48px;
+          width: 48px;
+          display: block;
+          position: absolute;
+          text-align: center;
+          margin: auto;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          font-weight: 700;
+          text-transform: uppercase;
+          color: rgba(103, 105, 109, 1);
+        }
+      }
+
+      > div {
+        text-overflow: ellipsis;
+        margin-right: 20px;
+      }
+    }
+  }
+
+  &-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .InputToggle {
+      transition: margin 0.3s ease;
+      margin-left: 18px;
+
+      &.checked {
+        margin-left: 24px;
+      }
+    }
+
+    .text {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      opacity: 0;
+      max-width: 0;
+      margin-right: 36px;
+    }
+
+    &.show {
+      max-width: 320px;
+
+      > div {
+        opacity: 1;
+        max-width: fit-content;
+        transition:
+          max-width 0.3s ease,
+          opacity 0.3s ease;
+      }
+    }
+  }
+}

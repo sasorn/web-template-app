@@ -1,0 +1,87 @@
+.Warning {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(60, 60, 60, 0.5);
+  display: flex;
+  z-index: 99999999999;
+  color: #3c3c3c;
+
+  &-close {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    height: 22px;
+    width: 22px;
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  &-wrapper {
+    width: 100%;
+    max-width: 700px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    padding: 50px 70px;
+    margin: auto;
+    max-width: 460px;
+    z-index: 100;
+    overflow-y: auto;
+    max-height: 100vh;
+
+    h2 {
+      font-weight: 400;
+      font-size: 36px;
+      line-height: 48px;
+      margin: 0 0 30px 0;
+      padding: 0;
+    }
+
+    p {
+      margin: 0;
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 26px;
+    }
+  }
+
+  &-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin: 30px 0 0 0;
+  }
+
+  &-close {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    height: 22px;
+    width: 22px;
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  @media screen and (max-width: 767px) {
+    &-wrapper {
+      padding: 30px 20px;
+      bottom: 0;
+      margin: auto 0 0 0;
+
+      h2 {
+        font-size: 24px;
+      }
+    }
+
+    &-buttons {
+      flex-direction: column;
+
+      .Button {
+        margin-bottom: 20px;
+      }
+    }
+  }
+}

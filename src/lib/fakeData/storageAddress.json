@@ -1,0 +1,100 @@
+{
+  "name": "STORAGE",
+  "locations": [
+    {
+      "storeName": "STORAGE Warrington",
+      "storeLocation": "910 Europa Boulevard",
+      "cityPost": "WARRINGTON, WA5 7TY"
+    },
+    {
+      "storeName": "STORAGE Birmingham",
+      "storeLocation": "Park Lane",
+      "cityPost": "WEDNESBURY, WS10 9SF"
+    },
+    {
+      "storeName": "STORAGE Wembley",
+      "storeLocation": "2 Drury Way",
+      "cityPost": "LONDON, NW10 0TH"
+    },
+    {
+      "storeName": "STORAGE Bristol",
+      "storeLocation": "Eastgate Centre, Eastgate Road",
+      "cityPost": "BRISTOL, BS5 6XX"
+    },
+    {
+      "storeName": "STORAGE Manchester",
+      "storeLocation": "110 Wellington Road",
+      "cityPost": "ASHTON-UNDER-LYNE, OL6 7TE"
+    },
+    {
+      "storeName": "STORAGE Belfast",
+      "storeLocation": "306 Airport Road West",
+      "cityPost": "BELFAST, BT3 9EJ"
+    },
+    {
+      "storeName": "STORAGE Cardiff",
+      "storeLocation": "Ferry Road",
+      "cityPost": "CARDIFF, CF11 0XR"
+    },
+    {
+      "storeName": "STORAGE Croydon",
+      "storeLocation": "Valley Park, Volta Way",
+      "cityPost": "CROYDON, CR0 4UZ"
+    },
+    {
+      "storeName": "STORAGE Edinburgh",
+      "storeLocation": "Costkea Way",
+      "cityPost": "LOANHEAD, EH20 9BY"
+    },
+    {
+      "storeName": "STORAGE Exeter",
+      "storeLocation": "Exeter, 1 STORE Way",
+      "cityPost": "EXETER, EX2 7RX"
+    },
+    {
+      "storeName": "STORAGE Gateshead",
+      "storeLocation": "Metro Park West",
+      "cityPost": "GATESHEAD, NE11 9XS"
+    },
+    {
+      "storeName": "STORAGE Glasgow",
+      "storeLocation": "99 Kings Inch Drive",
+      "cityPost": "GLASGOW, G51 4FB"
+    },
+    {
+      "storeName": "STORAGE Greenwich",
+      "storeLocation": "55-57 Bugsby's Way",
+      "cityPost": "LONDON, SE10 0QJ"
+    },
+    {
+      "storeName": "STORAGE Leeds",
+      "storeLocation": "West Yorkshire Retail Park, Holden Ing Way, Birstall",
+      "cityPost": "BATLEY, WF17 9AE"
+    },
+    {
+      "storeName": "STORAGE Milton Keynes",
+      "storeLocation": "Bletcham Way, Bletchley",
+      "cityPost": "MILTON KEYNES, MK1 1QB"
+    },
+    {
+      "storeName": "STORAGE Nottingham",
+      "storeLocation": "Giltbrook Retail Park, STORE Way, Giltbrook",
+      "cityPost": "NOTTINGHAM, NG16 2RP"
+    },
+    {
+      "storeName": "STORAGE Reading",
+      "storeLocation": "Pincents Kiln, Calcot",
+      "cityPost": "READING, RG31 7SD"
+    },
+    {
+      "storeName": "STORAGE Sheffield",
+      "storeLocation": "Sheffield Road, Tinsley",
+      "cityPost": "SHEFFIELD, S9 2YL"
+    },
+    {
+      "storeName": "STORAGE Southampton",
+      "storeLocation": "West Quay Road",
+      "cityPost": "SOUTHAMPTON, SO15 1GY"
+    }
+  ]
+}

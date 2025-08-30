@@ -1,0 +1,123 @@
+.Footer {
+  background-color: var(--background-secondary-color);
+  padding: 40px 20px;
+  font-family: sans-serif;
+  border-top: 2px solid var(--border-color);
+
+  a {
+    text-decoration: none;
+    transition: color 0.2s;
+    color: var(--text-color);
+
+    &:hover {
+      color: var(--text-color-light);
+    }
+  }
+
+  &-columns {
+    display: flex;
+    max-width: 1220px;
+    margin: 0 auto;
+    justify-content: space-between;
+  }
+
+  &-column {
+    flex: 1 1 180px;
+    margin: 10px;
+
+    h4 {
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+    }
+
+    h5 {
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 15px 0;
+
+      li {
+        margin-bottom: 8px;
+        padding: 5px 0;
+      }
+    }
+
+    &.social {
+      text-align: right;
+    }
+  }
+
+  &-subcolumn {
+    margin-bottom: 15px;
+  }
+
+  &-social {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    font-size: 1.5rem;
+    margin: 15px 0;
+  }
+
+  &-logo {
+    position: relative;
+
+    img {
+      width: 100px;
+    }
+
+    p {
+      margin: 0;
+    }
+  }
+
+  &-copy {
+    font-size: 0.7rem;
+    margin-top: -10px;
+    position: absolute;
+    top: 25px;
+    right: 0;
+  }
+
+  @media screen and (max-width: 900px) {
+    &-columns {
+      flex: 0 0 10%;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+    }
+
+    &-column {
+      max-width: 220px;
+
+      &.social {
+        text-align: left;
+      }
+    }
+
+    &-social {
+      justify-content: flex-start;
+    }
+
+    &-copy {
+      left: 65px;
+      right: unset;
+    }
+  }
+
+  @media screen and (max-width: 500px) {
+    padding-top: 10px;
+
+    &-columns {
+      display: block;
+    }
+
+    &-column {
+      max-width: none;
+      margin: 0;
+    }
+  }
+}

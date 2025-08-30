@@ -1,0 +1,116 @@
+{
+  "partners": [
+    {
+      "name": "B&Q",
+      "image": "https://uxss.in/krspit.com/cdn/mover/assets/shop/bnq.png",
+      "description": "DIY & Hardware",
+      "logoColor": "#ff6600",
+      "locationCount": 9
+    },
+    {
+      "name": "Homebase",
+      "image": "https://uxss.in/krspit.com/cdn/mover/assets/shop/homebase.png",
+      "description": "DIY & Hardware",
+      "logoColor": "#40ba5a",
+      "locationCount": 158
+    },
+    {
+      "name": "Howdens",
+      "image": "https://uxss.in/krspit.com/cdn/mover/assets/shop/howdens.png",
+      "description": "DIY & Hardware",
+      "logoColor": "#df161c",
+      "locationCount": 4
+    },
+    {
+      "name": "Robert Dyas",
+      "image": "https://uxss.in/krspit.com/cdn/mover/assets/shop/robertdyas.png",
+      "description": "DIY & Hardware",
+      "logoColor": "#eef2f2",
+      "locationCount": 16
+    },
+    {
+      "name": "Screwfix",
+      "image": "https://uxss.in/krspit.com/cdn/mover/assets/shop/screwfix.png",
+      "description": "DIY & Hardware",
+      "logoColor": "#f1f3f4",
+      "locationCount": 11
+    },
+    {
+      "name": "Selco",
+      "image": "https://uxss.in/krspit.com/cdn/mover/assets/shop/selco.png",
+      "description": "DIY & Hardware",
+      "logoColor": "#fed000",
+      "locationCount": 4
+    },
+    {
+      "name": "Toolstation",
+      "image": "https://uxss.in/krspit.com/cdn/mover/assets/shop/toolstation.png",
+      "description": "DIY & Hardware",
+      "logoColor": "#ffe000",
+      "locationCount": 15
+    },
+    {
+      "name": "Tradepoint",
+      "image": "https://uxss.in/krspit.com/cdn/mover/assets/shop/tradepoint.png",
+      "description": "DIY & Hardware",
+      "logoColor": "#000000",
+      "locationCount": 4
+    },
+    {
+      "name": "Travis Perkins",
+      "image": "https://uxss.in/krspit.com/cdn/mover/assets/shop/travisperkins.png",
+      "description": "DIY & Hardware",
+      "logoColor": "#084f38",
+      "locationCount": 8
+    },
+    {
+      "name": "Wickes",
+      "image": "https://uxss.in/krspit.com/cdn/mover/assets/shop/wickes.png",
+      "description": "DIY & Hardware",
+      "logoColor": "#094d99",
+      "locationCount": 8
+    },
+    {
+      "name": "Wilko",
+      "image": "https://uxss.in/krspit.com/cdn/mover/assets/shop/wilko.png",
+      "description": "DIY & Hardware",
+      "logoColor": "#b20837",
+      "locationCount": 9
+    },
+    {
+      "name": "Argos",
+      "image": "https://uxss.in/krspit.com/cdn/mover/assets/shop/argos.png",
+      "description": "Furniture & Homeware",
+      "logoColor": "#ef2f1f",
+      "locationCount": 23
+    },
+    {
+      "name": "British Heart Foundation",
+      "image": "https://uxss.in/krspit.com/cdn/mover/assets/shop/bhf.png",
+      "description": "Charity Shop",
+      "logoColor": "#fb0220",
+      "locationCount": 18
+    },
+    {
+      "name": "Dunelm",
+      "image": "https://uxss.in/krspit.com/cdn/mover/assets/shop/robertdyas.png",
+      "description": "Furniture & Homeware",
+      "logoColor": "#239f38",
+      "locationCount": 4
+    },
+    {
+      "name": "Home Bargains",
+      "image": "https://uxss.in/krspit.com/cdn/mover/assets/shop/homebargains.png",
+      "description": "Furniture & Homeware",
+      "logoColor": "#000000",
+      "locationCount": 3
+    },
+    {
+      "name": "IKEA",
+      "image": "https://uxss.in/krspit.com/cdn/mover/assets/shop/ikea.png",
+      "description": "IKEA GB",
+      "badgeIcon": "bolt",
+      "locationCount": 20
+    }
+  ]
+}

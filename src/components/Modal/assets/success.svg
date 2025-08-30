@@ -1,0 +1,63 @@
+<svg
+  class="st00"
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 52 52"
+  width="56"
+  height="56"
+>
+  <style>
+    .st00 {
+      display: block;
+      border-radius: 50%;
+      stroke-width: 3;
+      stroke: #ffffff;
+      stroke-miterlimit: 10;
+      box-shadow: inset 0px 0px 0px #74a345;
+      animation: fill 0.4s ease-in-out 0.4s forwards,
+                 scale 0.3s ease-in-out 0.9s both;
+    }
+
+    .st01 {
+      stroke-dasharray: 166;
+      stroke-dashoffset: 166;
+      stroke-width: 2;
+      stroke-miterlimit: 10;
+      stroke: #74a345;
+      fill: none;
+      animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+
+    .st02 {
+      transform-origin: 50% 50%;
+      stroke-dasharray: 48;
+      stroke-dashoffset: 48;
+      fill: none;
+      stroke: #ffffff;
+      animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+    }
+
+    @keyframes stroke {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes scale {
+      0%, 100% {
+        transform: none;
+      }
+      50% {
+        transform: scale3d(1.1, 1.1, 1);
+      }
+    }
+
+    @keyframes fill {
+      to {
+        box-shadow: inset 0px 0px 0px 30px #74a345;
+      }
+    }
+  </style>
+
+  <circle class="st01" cx="26" cy="26" r="25"/>
+  <path class="st02" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+</svg>

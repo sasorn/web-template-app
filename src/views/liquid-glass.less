@@ -1,0 +1,123 @@
+.liquid-glass {
+  position: relative;
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  /* Complex inner shadows for liquid effect */
+  box-shadow:
+    /* Outer shadow for depth */
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    /* Multiple inset shadows for liquid glass effect */ inset 3px 3px
+      0.5px -3.5px rgba(255, 255, 255, 0.3),
+    inset -3px -3px 0.5px -3.5px rgba(255, 255, 255, 0.3),
+    inset 1px 1px 1px 0.5px rgba(255, 255, 255, 0.4),
+    inset -1px -1px 1px -0.5px rgba(255, 255, 255, 0.4),
+    inset 0 0 1px 1px rgba(255, 255, 255, 0.2),
+    inset 0 0 1px 1px rgba(97, 97, 97, 0.1);
+
+  /* Outer glow effect */
+  &:before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background: conic-gradient(
+      from 0deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+    border-radius: 12px;
+    z-index: -1;
+    filter: blur(10px);
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+  }
+
+  /* Shimmer effect overlay */
+  &:after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.2) 0%,
+      transparent 50%,
+      transparent 100%
+    );
+    border-radius: 12px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+
+  /* Hover effects */
+  &:hover {
+    transform: scale(1.05);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+
+    &:before {
+      opacity: 0.75;
+    }
+
+    &:after {
+      opacity: 1;
+    }
+  }
+
+  /* Active/pressed state */
+  &:active {
+    transform: scale(0.95);
+  }
+
+  /* Size variations */
+  &-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+
+    &:before {
+      border-radius: 8px;
+    }
+
+    &:after {
+      border-radius: 8px;
+    }
+  }
+
+  &-lg {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+
+    &:before {
+      border-radius: 16px;
+    }
+    &:after {
+      border-radius: 16px;
+    }
+  }
+
+  /* Dark variant */
+  &-dark {
+    background: rgba(20, 20, 20, 0.9);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Content styling for icons/text */
+  &-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: white;
+    font-size: 14px;
+  }
+}
