@@ -22,18 +22,10 @@
       border-radius: 4px;
       position: relative;
 
-      &:before
-      // &:after
-      {
+      &:before {
         content: "";
         position: absolute;
         display: none;
-        // left: 0;
-        // bottom: 8px;
-        // width: 4px;
-        // border-radius: 4px;
-        // background: #eb0a1e;
-        // transform-origin: 50% calc(100% - 0.0625em);
 
         inset: 0;
         background-image: var(--check-icon);
@@ -41,26 +33,14 @@
         background-position: center;
         background-size: 14px auto;
       }
-
-      // &:before {
-      //   height: 8px;
-      //   transform: rotate(35deg);
-      // }
-
-      // &:after {
-      //   height: 6px;
-      //   transform: rotate(-55deg);
-      // }
     }
   }
 
   &.checked {
     label {
       span {
-        background-color: var(--primary-color);
-        &:before
-        // &:after
-        {
+        // background-color: var(--primary-color);
+        &:before {
           display: block;
         }
       }
@@ -69,6 +49,7 @@
 
   &.error {
     label {
+      color: var(--critical-color);
     }
   }
 

@@ -43,6 +43,20 @@ const initialValidationState = {
   layout: true
 };
 
+async function uploadFileToServer(file: File): Promise<{ url: string }> {
+  console.log(`Uploading: ${file.name}`);
+  // In a real app, this would use fetch() to post the file to your backend/S3/etc.
+  await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay
+  const permanentUrl = `https://cdn.your-service.com/media/${Date.now()}-${file.name}`;
+  console.log(`Upload complete for ${file.name}, URL: ${permanentUrl}`);
+  return { url: permanentUrl };
+}
+
+type StagedMedia = {
+  file: File;
+  blobUrl: string;
+};
+
 const MailTemplate: FC<MailTemplateProps> = () => {
   const savedLang = getStorage("locale")?.active || "da";
   const [activeLanguage, setActiveLanguage] = useState(savedLang);
@@ -53,6 +67,11 @@ const MailTemplate: FC<MailTemplateProps> = () => {
   const [subject, setSubject] = useState("");
   const [layout, setLayout] = useState("");
   const [content, setContent] = useState<any>(null);
+
+  // A single state to hold ALL staged media (files, images, videos)
+  const [stagedMedia, setStagedMedia] = useState<Map<string, StagedMedia>>(
+    new Map()
+  );
 
   const [validationState, setValidationState] = useState(
     initialValidationState
@@ -82,11 +101,69 @@ const MailTemplate: FC<MailTemplateProps> = () => {
     }
   };
 
+  // A single callback to handle staging any type of media
+  const handleMediaStaged = (mediaId: string, file: File, blobUrl: string) => {
+    setStagedMedia(prev => new Map(prev).set(mediaId, { file, blobUrl }));
+    console.log("Media staged:", { mediaId, name: file.name, blobUrl });
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     // Flag that will show a loading indicator
     setIsSubmitting(true);
+
+    // --- Start File Upload Logic ---
+    // 1. Parse the final HTML to find all media with a data-media-id
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = content;
+    const mediaElements = tempDiv.querySelectorAll("[data-media-id]");
+
+    // 2. Identify which staged files are still active in the editor
+    const activeMediaIds = new Set<string>();
+    mediaElements.forEach(el => {
+      const mediaId = el.getAttribute("data-media-id");
+      if (mediaId) {
+        activeMediaIds.add(mediaId);
+      }
+    });
+
+    // 3. Filter the staged media map to get only the active files
+    const mediaToUpload: { mediaId: string; data: StagedMedia }[] = [];
+    for (const [mediaId, data] of stagedMedia.entries()) {
+      if (activeMediaIds.has(mediaId)) {
+        mediaToUpload.push({ mediaId, data });
+      }
+    }
+
+    let finalContent = content;
+
+    // 4. Upload active files and get their permanent URLs
+    if (mediaToUpload.length > 0) {
+      console.log(`Starting upload for ${mediaToUpload.length} media items...`);
+      const uploadPromises = mediaToUpload.map(item =>
+        uploadFileToServer(item.data.file).then(response => ({
+          blobUrl: item.data.blobUrl,
+          permanentUrl: response.url
+        }))
+      );
+
+      const uploadResults = await Promise.all(uploadPromises);
+
+      // 5. Replace all temporary blob URLs in the content with permanent URLs
+      let updatedContent = finalContent;
+      uploadResults.forEach(result => {
+        console.log(
+          `Replacing temporary URL ${result.blobUrl} with permanent URL ${result.permanentUrl}`
+        );
+        updatedContent = updatedContent.replaceAll(
+          result.blobUrl,
+          result.permanentUrl
+        );
+      });
+      finalContent = updatedContent;
+    }
+    // --- End File Upload Logic ---
 
     // Collect data from state
     const userData = {
@@ -124,7 +201,13 @@ const MailTemplate: FC<MailTemplateProps> = () => {
       return false;
     }
 
-    console.log("submit data", userData);
+    const data = {
+      ...userData,
+      attachedFile: finalContent
+    };
+
+    console.log("submit data", data);
+    setIsSubmitting(false);
   };
 
   const handleCancel = () => {
@@ -135,15 +218,6 @@ const MailTemplate: FC<MailTemplateProps> = () => {
     setActiveLanguage(langKey);
     setStorage("locale", { active: langKey });
   };
-
-  // useEffect(() => {
-  //   console.log("Title:", title);
-  //   console.log("Phone:", phone);
-  //   console.log("Email:", email);
-  //   console.log("Subject:", subject);
-  //   console.log("Layout:", layout);
-  //   console.log("From Editor:", content);
-  // }, [title, phone, email, subject, layout, content]);
 
   return (
     <div className="MailTemplate">
@@ -231,6 +305,7 @@ const MailTemplate: FC<MailTemplateProps> = () => {
             <RichTextEditor
               placeholder={placeholderText}
               onChange={setContent}
+              onMediaStaged={handleMediaStaged}
             />
           </div>
 

@@ -5,7 +5,8 @@
   gap: 16px;
 
   &-container {
-    // background-color: red;
+    max-width: 60vw;
+    word-wrap: break-word;
   }
 
   h4 {
@@ -59,6 +60,23 @@
         flex: 0 0 calc(100% - 6px);
         border: 1px solid var(--border-primary-color);
         border-radius: 8px;
+        max-width: 100%;
+
+        .RichTextEditor {
+          &-container {
+            background-color: var(--background-color-light);
+          }
+
+          &-button,
+          &-dropdownButton,
+          &-colorButton {
+            background-color: var(--background-color-light);
+
+            &:hover {
+              background-color: #fff;
+            }
+          }
+        }
       }
 
       &.buttons {
@@ -95,7 +113,7 @@
       }
 
       .InputText {
-        background-color: #fff;
+        background-color: var(--background-color-light);
         border: 0.33px solid var(--border-input-color);
 
         .InputText {
@@ -106,7 +124,7 @@
       .InputDropdown {
         &-select {
           &-option {
-            background-color: #fff;
+            background-color: var(--background-color-light);
             border: 0.33px solid var(--border-input-color);
           }
 
@@ -116,7 +134,7 @@
           }
 
           &-list-option {
-            background-color: #fff;
+            background-color: var(--background-color-light);
             border-width: 0.33px;
             border-color: var(--border-input-color);
 
@@ -130,10 +148,6 @@
     }
 
     &-two {
-      background-color: #fff;
-      border: 0.33px solid var(--border-input-color);
-      border-radius: 8px;
-
       display: flex;
       align-items: center;
       gap: 16px;
@@ -157,7 +171,7 @@
   &-preview {
     display: flex;
     flex-direction: column;
-    max-width: 500px;
+    max-width: calc(40vw - 160px);
 
     h4 {
       margin: 0 0 12px;
@@ -165,11 +179,38 @@
 
     &-container {
       flex: 1;
-      min-height: 424;
-      gap: 10px;
+      min-height: 424px;
+      gap: 8px;
       padding: 10px;
       border-radius: 12px;
       background-color: #fff;
+      word-wrap: break-word;
+      border: 1px solid var(--border-primary-color);
+
+      div {
+        > pre {
+          overflow-y: auto;
+          background-color: #1f2937;
+          color: #f3f4f6;
+          padding: 16px;
+          border-radius: 6px;
+          line-height: 1.5em;
+        }
+
+        > code {
+          background-color: #eaeaea;
+          padding: 0 4px;
+          border-radius: 4px;
+        }
+
+        > blockquote {
+          border-left: 4px solid #d1d5db;
+          padding-left: 16px;
+          margin: 10px 0;
+          color: #6b7280;
+          font-style: italic;
+        }
+      }
 
       img,
       video {
