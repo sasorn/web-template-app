@@ -1,5 +1,24 @@
 import React, { FC, useRef, useState, useCallback, useEffect } from "react";
 
+import Tooltip from "../Tooltip/Tooltip";
+
+import chevronDown from "./assets/chevronDown.svg";
+import left from "./assets/left.svg";
+import bold from "./assets/bold.svg";
+import italic from "./assets/italic.svg";
+import underline from "./assets/underline.svg";
+import strikethrough from "./assets/strikethrough.svg";
+import inlineCode from "./assets/inlineCode.svg";
+import clearFormatting from "./assets/clearFormatting.svg";
+import bullet from "./assets/bullet.svg";
+import number from "./assets/number.svg";
+import attach from "./assets/attach.svg";
+import image from "./assets/image.svg";
+import video from "./assets/image.svg"; // Add video icon
+import blockCode from "./assets/blockCode.svg";
+import quote from "./assets/quote.svg";
+import line from "./assets/line.svg";
+
 import colors from "./assets/colors.json";
 
 import "./RichTextEditor.less";
@@ -19,6 +38,7 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
   const editorRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
   const colorPickerRef = useRef<HTMLDivElement>(null);
   const headingDropdownRef = useRef<HTMLDivElement>(null);
   const alignDropdownRef = useRef<HTMLDivElement>(null);
@@ -30,6 +50,10 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
   const [showHeadingDropdown, setShowHeadingDropdown] = useState(false);
   const [showAlignDropdown, setShowAlignDropdown] = useState(false);
   const [isEmpty, setIsEmpty] = useState(true);
+  const [selectedImage, setSelectedImage] = useState<HTMLImageElement | null>(
+    null
+  );
+  const [selectedMedia, setSelectedMedia] = useState<HTMLElement | null>(null);
 
   const headingOptions = [
     { value: "Normal text", label: "Normal text" },
@@ -47,57 +71,51 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
     { value: "Right", label: "Right" }
   ];
 
-  // Initialize editor with proper paragraph structure
-  const initializeEditor = useCallback(() => {
+  // Simplified content change handler
+  const handleContentChange = useCallback(() => {
+    if (!editorRef.current || !onChange) return;
+
+    const content = editorRef.current.innerHTML;
+    const textContent = editorRef.current.textContent || "";
+
+    // Simple empty check
+    const hasImages = content.includes("<img");
+    const hasVideos = content.includes("<video");
+    const isCurrentlyEmpty = !textContent.trim() && !hasImages && !hasVideos;
+    setIsEmpty(isCurrentlyEmpty);
+
+    // Send content without aggressive cleaning
+    onChange(content);
+  }, [onChange]);
+
+  // Initialize editor
+  useEffect(() => {
     if (!editorRef.current) return;
 
     if (initialValue) {
       editorRef.current.innerHTML = initialValue;
       setIsEmpty(false);
     } else {
-      // Start with an empty paragraph for consistent structure
       editorRef.current.innerHTML = "<p><br></p>";
       setIsEmpty(true);
     }
-
-    // Set focus to the paragraph if empty
-    if (!initialValue) {
-      const firstP = editorRef.current.querySelector("p");
-      if (firstP) {
-        const range = document.createRange();
-        const selection = window.getSelection();
-        range.setStart(firstP, 0);
-        range.collapse(true);
-        selection?.removeAllRanges();
-        selection?.addRange(range);
-      }
-    }
   }, [initialValue]);
-
-  useEffect(() => {
-    initializeEditor();
-  }, [initializeEditor]);
 
   // Handle clicks outside dropdowns
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      // Close color picker
       if (
         colorPickerRef.current &&
         !colorPickerRef.current.contains(event.target as Node)
       ) {
         setShowColorPicker(false);
       }
-
-      // Close heading dropdown
       if (
         headingDropdownRef.current &&
         !headingDropdownRef.current.contains(event.target as Node)
       ) {
         setShowHeadingDropdown(false);
       }
-
-      // Close align dropdown
       if (
         alignDropdownRef.current &&
         !alignDropdownRef.current.contains(event.target as Node)
@@ -107,186 +125,26 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Enhanced content cleaning function
-  const cleanEmptyElements = useCallback((html: string) => {
-    // Remove empty elements with just <br> or whitespace
-    let cleaned = html
-      // Remove empty divs with just <br>
-      .replace(/<div[^>]*>\s*<br[^>]*>\s*<\/div>/gi, "")
-      // Remove empty paragraphs with just <br>
-      .replace(/<p[^>]*>\s*<br[^>]*>\s*<\/p>/gi, "")
-      // Remove empty headings with just <br>
-      .replace(/<h[1-6][^>]*>\s*<br[^>]*>\s*<\/h[1-6]>/gi, "")
-      // Remove empty divs
-      .replace(/<div[^>]*>\s*<\/div>/gi, "")
-      // Remove empty paragraphs
-      .replace(/<p[^>]*>\s*<\/p>/gi, "")
-      // Remove empty headings
-      .replace(/<h[1-6][^>]*>\s*<\/h[1-6]>/gi, "")
-      // Remove empty spans
-      .replace(/<span[^>]*>\s*<\/span>/gi, "")
-      // Remove empty strong/b tags
-      .replace(/<(strong|b)[^>]*>\s*<\/(strong|b)>/gi, "")
-      // Remove empty em/i tags
-      .replace(/<(em|i)[^>]*>\s*<\/(em|i)>/gi, "")
-      // Remove empty u tags
-      .replace(/<u[^>]*>\s*<\/u>/gi, "")
-      // Clean up multiple consecutive <br> tags (more than 2)
-      .replace(/(<br[^>]*>\s*){3,}/gi, "<br><br>")
-      // Remove leading/trailing <br> tags
-      .replace(/^(\s*<br[^>]*>\s*)+/gi, "")
-      .replace(/(\s*<br[^>]*>\s*)+$/gi, "");
-
-    // If the content is completely empty or just whitespace/br tags, return empty string
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = cleaned;
-    const textContent = tempDiv.textContent || tempDiv.innerText || "";
-
-    // Check if there's any meaningful content (text or images)
-    const hasImages = cleaned.match(/<img[^>]*>/i);
-    const hasOtherContent = cleaned.match(/<(?!br\s*\/?>)[^>]+>/i); // Any tag except <br>
-
-    if (!textContent.trim() && !hasImages && !hasOtherContent) {
-      return "";
-    }
-
-    return cleaned;
-  }, []);
-
-  // Enhanced content change handler with paragraph enforcement
-  const handleContentChange = useCallback(() => {
-    if (!editorRef.current) return;
-
-    // Ensure content is wrapped in paragraphs
-    const ensureParagraphStructure = () => {
-      const editor = editorRef.current!;
-      const childNodes = Array.from(editor.childNodes);
-
-      childNodes.forEach(node => {
-        // If we have a text node or inline element at the root level, wrap it in a paragraph
-        if (
-          node.nodeType === Node.TEXT_NODE ||
-          (node.nodeType === Node.ELEMENT_NODE &&
-            ![
-              "P",
-              "H1",
-              "H2",
-              "H3",
-              "H4",
-              "H5",
-              "H6",
-              "BLOCKQUOTE",
-              "PRE",
-              "UL",
-              "OL",
-              "HR",
-              "DIV"
-            ].includes((node as Element).tagName))
-        ) {
-          const p = document.createElement("p");
-          node.parentNode?.insertBefore(p, node);
-          p.appendChild(node);
-        }
-      });
-
-      // If editor is completely empty, add an empty paragraph
-      if (
-        editor.childNodes.length === 0 ||
-        (editor.childNodes.length === 1 && editor.textContent?.trim() === "")
-      ) {
-        editor.innerHTML = "<p><br></p>";
-      }
-    };
-
-    ensureParagraphStructure();
-
-    // Check if editor is empty and update state
-    const content = editorRef.current.innerHTML;
-    const textContent = editorRef.current.textContent || "";
-    const hasImages = content.includes("<img");
-    const hasOtherContent = content.match(/<(?!br\s*\/?>|p[^>]*>|\/p>)[^>]+>/i);
-    const isCurrentlyEmpty =
-      !textContent.trim() && !hasImages && !hasOtherContent;
-
-    setIsEmpty(isCurrentlyEmpty);
-
-    if (onChange) {
-      const rawHtml = editorRef.current.innerHTML;
-      const cleanedHtml = cleanEmptyElements(rawHtml);
-
-      // Only update if the cleaned content is different
-      if (cleanedHtml !== rawHtml) {
-        editorRef.current.innerHTML = cleanedHtml;
-        // If content is completely empty after cleaning, reinitialize
-        if (!cleanedHtml) {
-          editorRef.current.innerHTML = "<p><br></p>";
-          setIsEmpty(true);
-        }
-      }
-
-      onChange(cleanedHtml);
-    }
-  }, [onChange, cleanEmptyElements]);
-
-  // Handle key events for better paragraph management
+  // Simple key handler - removed problematic DOM manipulation
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      // Handle Enter key to ensure new paragraphs are created properly
-      if (e.key === "Enter" && !e.shiftKey) {
-        // Let the browser handle the enter, but ensure it creates <p> tags
-        setTimeout(() => {
-          if (editorRef.current) {
-            // Convert any <div> elements to <p> elements
-            const divs = editorRef.current.querySelectorAll("div");
-            divs.forEach(div => {
-              if (
-                !div.querySelector(
-                  "p, h1, h2, h3, h4, h5, h6, blockquote, pre, ul, ol"
-                )
-              ) {
-                const p = document.createElement("p");
-                p.innerHTML = div.innerHTML || "<br>";
-                div.parentNode?.replaceChild(p, div);
-              }
-            });
-            handleContentChange();
-          }
-        }, 0);
-      }
-
-      // Handle backspace/delete for better empty element cleanup
-      if (e.key === "Backspace" || e.key === "Delete") {
-        setTimeout(() => {
-          handleContentChange();
-        }, 0);
+      // Let browser handle Enter naturally - no DOM manipulation
+      if (e.key === "Enter") {
+        // Just trigger content change after browser handles it
+        setTimeout(handleContentChange, 10);
       }
     },
     [handleContentChange]
   );
 
-  const getSelectedText = useCallback(() => {
-    const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) return null;
-
-    const range = selection.getRangeAt(0);
-    const selectedText = selection.toString();
-
-    return { selection, range, selectedText };
-  }, []);
-
   const execCommand = useCallback(
     (command: string, value: string | boolean = false) => {
       document.execCommand(command, false, value as string);
       editorRef.current?.focus();
-      // Use setTimeout to allow DOM to update before cleaning
-      setTimeout(() => {
-        handleContentChange();
-      }, 0);
+      handleContentChange();
     },
     [handleContentChange]
   );
@@ -330,203 +188,122 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
     [execCommand]
   );
 
-  const insertCode = useCallback(() => {
-    const selectionData = getSelectedText();
-    if (!selectionData) return;
-
-    const { selection, range, selectedText } = selectionData;
-
-    // Check if the parent is already a code element
-    const parentElement =
-      range.commonAncestorContainer.nodeType === Node.TEXT_NODE
-        ? range.commonAncestorContainer.parentElement
-        : (range.commonAncestorContainer as HTMLElement);
-
-    if (parentElement?.tagName === "CODE") {
-      // Remove code formatting
-      const textNode = document.createTextNode(
-        selectedText || parentElement.textContent || ""
-      );
-      parentElement.parentNode?.replaceChild(textNode, parentElement);
-    } else {
-      // Apply code formatting
-      const code = document.createElement("code");
-      code.style.backgroundColor = "#f3f4f6";
-      code.style.padding = "2px 4px";
-      code.style.borderRadius = "3px";
-      code.style.fontFamily = "monospace";
-      code.style.fontSize = "0.9em";
-
-      if (!range.collapsed) {
-        const contents = range.extractContents();
-        code.appendChild(contents);
-        range.insertNode(code);
-      } else {
-        code.textContent = "code";
-        range.insertNode(code);
+  // Image upload with selection capability
+  const handleImageUpload = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file || !file.type.startsWith("image/")) {
+        alert("Please select a valid image file.");
+        return;
       }
 
-      // Move cursor to end of code element
-      range.selectNodeContents(code);
-      range.collapse(false);
-      selection.removeAllRanges();
-      selection.addRange(range);
-    }
+      const reader = new FileReader();
+      reader.onload = event => {
+        const result = event.target?.result;
+        if (result && editorRef.current) {
+          // Create unique ID for the image
+          const imageId = `img_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+          const img = `<img id="${imageId}" src="${result}" alt="${file.name}" style="max-width: 100%; height: auto; display: block; margin: 1em 0; cursor: pointer;" data-media-type="image" />`;
+          execCommand("insertHTML", img);
 
-    editorRef.current?.focus();
-    handleContentChange();
-  }, [getSelectedText, handleContentChange]);
+          // Add click handler after insertion
+          setTimeout(() => {
+            const insertedImg = editorRef.current?.querySelector(
+              `#${imageId}`
+            ) as HTMLImageElement;
+            if (insertedImg) {
+              insertedImg.onclick = event => {
+                event.preventDefault();
+                event.stopPropagation();
 
-  const clearFormat = useCallback(() => {
-    execCommand("removeFormat");
-    execCommand("formatBlock", "p");
-    setSelectedHeading("Normal text");
-    setSelectedAlign("Left");
-    setSelectedColor("#000000");
-  }, [execCommand]);
+                // Deselect previously selected media
+                const prevSelected = editorRef.current?.querySelector(
+                  '[style*="outline: 2px solid #3b82f6"]'
+                );
+                if (prevSelected) {
+                  (prevSelected as HTMLElement).style.outline = "";
+                }
 
-  const insertCodeBlock = useCallback(() => {
-    const selectionData = getSelectedText();
-    if (!selectionData) return;
-
-    const { selection, range, selectedText } = selectionData;
-
-    // Check if we're inside a pre/code block
-    let currentNode: Node | null = range.commonAncestorContainer;
-    let isInCodeBlock = false;
-
-    while (currentNode && currentNode !== editorRef.current) {
-      if (currentNode.nodeType === Node.ELEMENT_NODE) {
-        const element = currentNode as HTMLElement;
-        if (
-          element.tagName === "PRE" ||
-          (element.tagName === "CODE" &&
-            element.parentElement?.tagName === "PRE")
-        ) {
-          isInCodeBlock = true;
-          break;
+                // Select this image
+                insertedImg.style.outline = "2px solid #3b82f6";
+                setSelectedImage(insertedImg);
+                setSelectedMedia(insertedImg);
+                editorRef.current?.focus();
+              };
+            }
+          }, 100);
         }
-      }
-      currentNode = currentNode.parentNode;
-    }
+      };
 
-    if (isInCodeBlock && currentNode) {
-      // Remove code block formatting
-      const pre =
-        currentNode.nodeType === Node.ELEMENT_NODE &&
-        (currentNode as HTMLElement).tagName === "PRE"
-          ? (currentNode as HTMLElement)
-          : (currentNode as HTMLElement).parentElement;
+      reader.onerror = () => {
+        alert("Failed to read the image file. Please try again.");
+      };
 
-      if (pre) {
-        const p = document.createElement("p");
-        p.textContent = pre.textContent || "";
-        pre.parentNode?.replaceChild(p, pre);
-      }
-    } else {
-      // Apply code block formatting
-      const pre = document.createElement("pre");
-      pre.style.backgroundColor = "#1f2937";
-      pre.style.color = "#f3f4f6";
-      pre.style.padding = "16px";
-      pre.style.borderRadius = "6px";
-      pre.style.overflowX = "auto";
-      pre.style.fontFamily = "monospace";
-      pre.style.margin = "10px 0";
-
-      const code = document.createElement("code");
-
-      if (!range.collapsed && selectedText) {
-        const contents = range.extractContents();
-        code.appendChild(contents);
-      } else {
-        code.textContent = "// Enter your code here";
-      }
-
-      pre.appendChild(code);
-      range.insertNode(pre);
-
-      // Place cursor at the end of the code block
-      const newRange = document.createRange();
-      newRange.selectNodeContents(code);
-      newRange.collapse(false);
-      selection.removeAllRanges();
-      selection.addRange(newRange);
-    }
-
-    editorRef.current?.focus();
-    handleContentChange();
-  }, [getSelectedText, handleContentChange]);
-
-  const insertQuote = useCallback(() => {
-    const selectionData = getSelectedText();
-    if (!selectionData) return;
-
-    const { selection, range, selectedText } = selectionData;
-
-    // Check if we're inside a blockquote
-    let currentNode: Node | null = range.commonAncestorContainer;
-    let isInQuote = false;
-
-    while (currentNode && currentNode !== editorRef.current) {
-      if (
-        currentNode.nodeType === Node.ELEMENT_NODE &&
-        (currentNode as HTMLElement).tagName === "BLOCKQUOTE"
-      ) {
-        isInQuote = true;
-        break;
-      }
-      currentNode = currentNode.parentNode;
-    }
-
-    if (isInQuote && currentNode) {
-      // Remove quote formatting and wrap in paragraph
-      const blockquote = currentNode as HTMLElement;
-      const p = document.createElement("p");
-      p.textContent = blockquote.textContent || "";
-      blockquote.parentNode?.replaceChild(p, blockquote);
-    } else {
-      // Apply quote formatting
-      const blockquote = document.createElement("blockquote");
-      blockquote.style.borderLeft = "4px solid #d1d5db";
-      blockquote.style.paddingLeft = "16px";
-      blockquote.style.margin = "10px 0";
-      blockquote.style.color = "#6b7280";
-      blockquote.style.fontStyle = "italic";
-
-      if (!range.collapsed && selectedText) {
-        const contents = range.extractContents();
-        blockquote.appendChild(contents);
-      } else {
-        blockquote.textContent = "Quote text here";
-      }
-
-      range.insertNode(blockquote);
-
-      // Place cursor at the end of the quote
-      const newRange = document.createRange();
-      newRange.selectNodeContents(blockquote);
-      newRange.collapse(false);
-      selection.removeAllRanges();
-      selection.addRange(newRange);
-    }
-
-    editorRef.current?.focus();
-    handleContentChange();
-  }, [getSelectedText, handleContentChange]);
-
-  const toggleFormat = useCallback(
-    (command: string) => {
-      execCommand(command);
+      reader.readAsDataURL(file);
+      e.target.value = "";
     },
     [execCommand]
   );
 
-  const toggleList = useCallback(
-    (listType: "ul" | "ol") => {
-      const command =
-        listType === "ul" ? "insertUnorderedList" : "insertOrderedList";
-      execCommand(command);
+  // Video upload with selection capability
+  const handleVideoUpload = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file || !file.type.startsWith("video/")) {
+        alert("Please select a valid video file.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = event => {
+        const result = event.target?.result;
+        if (result && editorRef.current) {
+          // Create unique ID for the video
+          const videoId = `video_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+          const video = `<p><br></p><video id="${videoId}" controls style="max-width: 100%; height: auto; display: block; margin: 1em 0; cursor: pointer;" data-media-type="video">
+          <source src="${result}" type="${file.type}">
+          Your browser does not support the video tag.
+        </video><p><br></p>`;
+          execCommand("insertHTML", video);
+
+          // Add click handler after insertion
+          setTimeout(() => {
+            const insertedVideo = editorRef.current?.querySelector(
+              `#${videoId}`
+            ) as HTMLVideoElement;
+            if (insertedVideo) {
+              insertedVideo.onclick = event => {
+                // Only handle selection clicks, not video control clicks
+                if ((event.target as HTMLElement).tagName === "VIDEO") {
+                  event.preventDefault();
+                  event.stopPropagation();
+
+                  // Deselect previously selected media
+                  const prevSelected = editorRef.current?.querySelector(
+                    '[style*="outline: 2px solid #3b82f6"]'
+                  );
+                  if (prevSelected) {
+                    (prevSelected as HTMLElement).style.outline = "";
+                  }
+
+                  // Select this video
+                  insertedVideo.style.outline = "2px solid #3b82f6";
+                  setSelectedImage(null);
+                  setSelectedMedia(insertedVideo);
+                  editorRef.current?.focus();
+                }
+              };
+            }
+          }, 100);
+        }
+      };
+
+      reader.onerror = () => {
+        alert("Failed to read the video file. Please try again.");
+      };
+
+      reader.readAsDataURL(file);
+      e.target.value = "";
     },
     [execCommand]
   );
@@ -544,41 +321,139 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
     [execCommand]
   );
 
-  const handleImageUpload = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file && file.type.startsWith("image/")) {
-        const reader = new FileReader();
-        reader.onload = event => {
-          const img = `<img src="${event.target?.result}" style="max-width: 100%; height: auto; border-radius: 6px; margin: 10px 0;" alt="${file.name}" />`;
-          execCommand("insertHTML", img);
-        };
-        reader.readAsDataURL(file);
-      }
-      e.target.value = "";
+  const insertCode = useCallback(() => {
+    const selection = window.getSelection();
+    const selectedText = selection?.toString();
+
+    if (selectedText) {
+      execCommand("insertHTML", `<code>${selectedText}</code>`);
+    } else {
+      execCommand("insertHTML", "<code>code</code>");
+    }
+  }, [execCommand]);
+
+  const insertCodeBlock = useCallback(() => {
+    const selection = window.getSelection();
+    const selectedText = selection?.toString() || "// Enter your code here";
+    execCommand("insertHTML", `<pre><code>${selectedText}</code></pre>`);
+  }, [execCommand]);
+
+  const insertQuote = useCallback(() => {
+    const selection = window.getSelection();
+    const selectedText = selection?.toString() || "Quote text here";
+    execCommand("insertHTML", `<blockquote>${selectedText}</blockquote>`);
+  }, [execCommand]);
+
+  const toggleFormat = useCallback(
+    (command: string) => {
+      execCommand(command);
     },
     [execCommand]
   );
 
-  const [hoveredButton, setHoveredButton] = useState<string | null>(null);
+  const toggleList = useCallback(
+    (listType: "ul" | "ol") => {
+      const command =
+        listType === "ul" ? "insertUnorderedList" : "insertOrderedList";
+      execCommand(command);
+    },
+    [execCommand]
+  );
+
+  const clearFormat = useCallback(() => {
+    execCommand("removeFormat");
+    execCommand("formatBlock", "p");
+    setSelectedHeading("Normal text");
+    setSelectedAlign("Left");
+    setSelectedColor("#000000");
+  }, [execCommand]);
+
+  // Media toolbar functions (works for both images and videos)
+  const alignMedia = useCallback(
+    (alignment: "left" | "center" | "right") => {
+      if (!selectedMedia) return;
+
+      switch (alignment) {
+        case "left":
+          selectedMedia.style.display = "block";
+          selectedMedia.style.margin = "0 0 1em";
+          break;
+        case "center":
+          selectedMedia.style.display = "block";
+          selectedMedia.style.margin = "0 auto 1em";
+          break;
+        case "right":
+          selectedMedia.style.display = "block";
+          selectedMedia.style.margin = "0 0 1em auto";
+          break;
+      }
+      handleContentChange();
+    },
+    [selectedMedia, handleContentChange]
+  );
+
+  const resizeMedia = useCallback(
+    (size: "small" | "medium" | "large" | "full" | "original") => {
+      if (!selectedMedia) return;
+
+      switch (size) {
+        case "small":
+          selectedMedia.style.width = "200px";
+          selectedMedia.style.maxWidth = "200px";
+          break;
+        case "medium":
+          selectedMedia.style.width = "400px";
+          selectedMedia.style.maxWidth = "400px";
+          break;
+        case "large":
+          selectedMedia.style.width = "600px";
+          selectedMedia.style.maxWidth = "600px";
+          break;
+        case "full":
+          selectedMedia.style.width = "100%";
+          selectedMedia.style.maxWidth = "100%";
+          break;
+        case "original":
+          selectedMedia.style.width = "auto";
+          selectedMedia.style.maxWidth = "100%";
+          break;
+      }
+      handleContentChange();
+    },
+    [selectedMedia, handleContentChange]
+  );
+
+  // Handle clicks to deselect media
+  const handleEditorClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (selectedMedia && e.target !== selectedMedia) {
+        selectedMedia.style.outline = "";
+        setSelectedImage(null);
+        setSelectedMedia(null);
+      }
+    },
+    [selectedMedia]
+  );
 
   return (
     <div className="RichTextEditor-container">
       <div className="RichTextEditor-toolbar">
-        {/* Custom Heading Dropdown */}
+        {/* Heading Dropdown */}
         <div className="RichTextEditor-dropdown" ref={headingDropdownRef}>
-          <button
-            className="RichTextEditor-dropdownButton"
-            onClick={() => setShowHeadingDropdown(!showHeadingDropdown)}
-            title="Text format"
-          >
-            {selectedHeading}
-            <span
-              className={`RichTextEditor-dropdownArrow ${showHeadingDropdown ? "open" : ""}`}
+          <Tooltip direction="bottom" content="Text format">
+            <button
+              className="RichTextEditor-dropdownButton pr text"
+              onClick={() => setShowHeadingDropdown(!showHeadingDropdown)}
             >
-              ▼
-            </span>
-          </button>
+              {selectedHeading}
+              <span
+                className={`RichTextEditor-dropdownArrow ${showHeadingDropdown ? "open" : ""}`}
+              >
+                <img src={chevronDown} alt="Select heading" />
+              </span>
+            </button>
+          </Tooltip>
+
           {showHeadingDropdown && (
             <div className="RichTextEditor-dropdownMenu">
               {headingOptions.map(option => (
@@ -594,20 +469,21 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
           )}
         </div>
 
-        {/* Custom Align Dropdown */}
+        {/* Align Dropdown */}
         <div className="RichTextEditor-dropdown" ref={alignDropdownRef}>
-          <button
-            className="RichTextEditor-dropdownButton"
-            onClick={() => setShowAlignDropdown(!showAlignDropdown)}
-            title="Text alignment"
-          >
-            {selectedAlign}
-            <span
-              className={`RichTextEditor-dropdownArrow ${showAlignDropdown ? "open" : ""}`}
+          <Tooltip direction="bottom" content="Text alignment">
+            <button
+              className="RichTextEditor-dropdownButton pr align"
+              onClick={() => setShowAlignDropdown(!showAlignDropdown)}
             >
-              ▼
-            </span>
-          </button>
+              <img src={left} alt="Text alignment" />
+              <span
+                className={`RichTextEditor-dropdownArrow ${showAlignDropdown ? "open" : ""}`}
+              >
+                <img src={chevronDown} alt="Text alignment" />
+              </span>
+            </button>
+          </Tooltip>
 
           {showAlignDropdown && (
             <div className="RichTextEditor-dropdownMenu">
@@ -626,158 +502,153 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
 
         {/* Color Picker */}
         <div className="RichTextEditor-colorPicker" ref={colorPickerRef}>
-          <button
-            className="RichTextEditor-colorButton"
-            onClick={() => setShowColorPicker(!showColorPicker)}
-            title="Text Color"
-            style={{ color: selectedColor }}
-          >
-            A
-          </button>
+          <Tooltip direction="bottom" content="Text Color">
+            <button
+              className="RichTextEditor-colorButton pr"
+              onClick={() => setShowColorPicker(!showColorPicker)}
+            >
+              <span style={{ backgroundColor: selectedColor }}></span>
+              <span
+                className={`RichTextEditor-dropdownArrow ${showColorPicker ? "open" : ""}`}
+              >
+                <img src={chevronDown} alt="Select color" />
+              </span>
+            </button>
+          </Tooltip>
+
           {showColorPicker && (
             <div className="RichTextEditor-colorGrid">
               {colors.map(color => (
-                <button
-                  key={color}
-                  className="RichTextEditor-colorSwatch"
-                  style={{ backgroundColor: color }}
-                  onClick={() => formatColor(color)}
-                  title={color}
-                />
+                <Tooltip
+                  key={color.code}
+                  direction="bottom"
+                  content={color.title}
+                >
+                  <button
+                    className="RichTextEditor-colorSwatch"
+                    style={{ backgroundColor: color.code }}
+                    onClick={() => formatColor(color.code)}
+                  />
+                </Tooltip>
               ))}
             </div>
           )}
         </div>
 
-        <button
-          className="RichTextEditor-button"
-          onMouseEnter={() => setHoveredButton("bold")}
-          onMouseLeave={() => setHoveredButton(null)}
-          onClick={() => toggleFormat("bold")}
-          title="Bold"
-        >
-          <strong>B</strong>
-        </button>
+        {/* Format Buttons */}
+        <Tooltip direction="bottom" content="Bold">
+          <button
+            className="RichTextEditor-button"
+            onClick={() => toggleFormat("bold")}
+          >
+            <img src={bold} alt="Bold" />
+          </button>
+        </Tooltip>
 
-        <button
-          className="RichTextEditor-button"
-          onMouseEnter={() => setHoveredButton("italic")}
-          onMouseLeave={() => setHoveredButton(null)}
-          onClick={() => toggleFormat("italic")}
-          title="Italic"
-        >
-          <em>I</em>
-        </button>
+        <Tooltip direction="bottom" content="Italic">
+          <button
+            className="RichTextEditor-button"
+            onClick={() => toggleFormat("italic")}
+          >
+            <img src={italic} alt="Italic" />
+          </button>
+        </Tooltip>
 
-        <button
-          className="RichTextEditor-button"
-          onMouseEnter={() => setHoveredButton("underline")}
-          onMouseLeave={() => setHoveredButton(null)}
-          onClick={() => toggleFormat("underline")}
-          title="Underline"
-        >
-          <u>U</u>
-        </button>
+        <Tooltip direction="bottom" content="Underline">
+          <button
+            className="RichTextEditor-button"
+            onClick={() => toggleFormat("underline")}
+          >
+            <img src={underline} alt="Underline" />
+          </button>
+        </Tooltip>
 
-        <button
-          className="RichTextEditor-button"
-          onMouseEnter={() => setHoveredButton("strike")}
-          onMouseLeave={() => setHoveredButton(null)}
-          onClick={() => toggleFormat("strikeThrough")}
-          title="Strikethrough"
-        >
-          <s>S</s>
-        </button>
+        <Tooltip direction="bottom" content="Strikethrough">
+          <button
+            className="RichTextEditor-button"
+            onClick={() => toggleFormat("strikeThrough")}
+          >
+            <img src={strikethrough} alt="Strikethrough" />
+          </button>
+        </Tooltip>
 
-        <button
-          className="RichTextEditor-button"
-          onMouseEnter={() => setHoveredButton("code")}
-          onMouseLeave={() => setHoveredButton(null)}
-          onClick={insertCode}
-          title="Inline code"
-        >
-          {"< >"}
-        </button>
+        <Tooltip direction="bottom" content="Inline code">
+          <button className="RichTextEditor-button" onClick={insertCode}>
+            <img src={inlineCode} alt="Inline code" />
+          </button>
+        </Tooltip>
 
-        <button
-          className="RichTextEditor-button"
-          onMouseEnter={() => setHoveredButton("clear")}
-          onMouseLeave={() => setHoveredButton(null)}
-          onClick={clearFormat}
-          title="Clear format"
-        >
-          clear format
-        </button>
+        <Tooltip direction="bottom" content="Clear format">
+          <button className="RichTextEditor-button pr" onClick={clearFormat}>
+            <img src={clearFormatting} alt="Clear format" />
+          </button>
+        </Tooltip>
 
-        <button
-          className="RichTextEditor-button"
-          onMouseEnter={() => setHoveredButton("bullet")}
-          onMouseLeave={() => setHoveredButton(null)}
-          onClick={() => toggleList("ul")}
-          title="Bullet list"
-        >
-          bullet
-        </button>
+        <Tooltip direction="bottom" content="Bullet list">
+          <button
+            className="RichTextEditor-button"
+            onClick={() => toggleList("ul")}
+          >
+            <img src={bullet} alt="Bullet list" />
+          </button>
+        </Tooltip>
 
-        <button
-          className="RichTextEditor-button"
-          onMouseEnter={() => setHoveredButton("numbered")}
-          onMouseLeave={() => setHoveredButton(null)}
-          onClick={() => toggleList("ol")}
-          title="Numbered list"
-        >
-          numbered
-        </button>
+        <Tooltip direction="bottom" content="Numbered list">
+          <button
+            className="RichTextEditor-button pr"
+            onClick={() => toggleList("ol")}
+          >
+            <img src={number} alt="Numbered list" />
+          </button>
+        </Tooltip>
 
-        <button
-          className="RichTextEditor-button"
-          onMouseEnter={() => setHoveredButton("attach")}
-          onMouseLeave={() => setHoveredButton(null)}
-          onClick={() => fileInputRef.current?.click()}
-          title="Attach file"
-        >
-          attach
-        </button>
+        <Tooltip direction="bottom" content="Attach file">
+          <button
+            className="RichTextEditor-button"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <img src={attach} alt="Attach file" />
+          </button>
+        </Tooltip>
 
-        <button
-          className="RichTextEditor-button"
-          onMouseEnter={() => setHoveredButton("image")}
-          onMouseLeave={() => setHoveredButton(null)}
-          onClick={() => imageInputRef.current?.click()}
-          title="Insert image"
-        >
-          image
-        </button>
+        <Tooltip direction="bottom" content="Insert image">
+          <button
+            className="RichTextEditor-button"
+            onClick={() => imageInputRef.current?.click()}
+          >
+            <img src={image} alt="Insert image" />
+          </button>
+        </Tooltip>
 
-        <button
-          className="RichTextEditor-button"
-          onMouseEnter={() => setHoveredButton("codeblock")}
-          onMouseLeave={() => setHoveredButton(null)}
-          onClick={insertCodeBlock}
-          title="Code block"
-        >
-          {"<code/>"}
-        </button>
+        <Tooltip direction="bottom" content="Insert video">
+          <button
+            className="RichTextEditor-button"
+            onClick={() => videoInputRef.current?.click()}
+          >
+            <img src={video} alt="Insert video" />
+          </button>
+        </Tooltip>
 
-        <button
-          className="RichTextEditor-button"
-          onMouseEnter={() => setHoveredButton("quote")}
-          onMouseLeave={() => setHoveredButton(null)}
-          onClick={insertQuote}
-          title="Quote"
-        >
-          quote
-        </button>
+        <Tooltip direction="bottom" content="Code block">
+          <button className="RichTextEditor-button" onClick={insertCodeBlock}>
+            <img src={blockCode} alt="Code block" />
+          </button>
+        </Tooltip>
 
-        <button
-          className="RichTextEditor-button"
-          onMouseEnter={() => setHoveredButton("hr")}
-          onMouseLeave={() => setHoveredButton(null)}
-          onClick={() => execCommand("insertHorizontalRule")}
-          title="Horizontal rule"
-        >
-          —
-        </button>
+        <Tooltip direction="bottom" content="Quote">
+          <button className="RichTextEditor-button" onClick={insertQuote}>
+            <img src={quote} alt="Quote" />
+          </button>
+        </Tooltip>
+
+        <Tooltip direction="bottom" content="Horizontal rule">
+          <button
+            className="RichTextEditor-button"
+            onClick={() => execCommand("insertHorizontalRule")}
+          >
+            <img src={line} alt="Horizontal rule" />
+          </button>
+        </Tooltip>
       </div>
 
       <div
@@ -786,9 +657,104 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
         className={`RichTextEditor-editor ${isEmpty ? "empty" : ""}`}
         onInput={handleContentChange}
         onKeyDown={handleKeyDown}
+        onClick={handleEditorClick}
         data-placeholder={placeholder}
         suppressContentEditableWarning={true}
       />
+
+      {/* Media Toolbar (for both images and videos) */}
+      {selectedMedia && (
+        <div className="RichTextEditor-mediaToolbar">
+          <div>
+            <label style={{ fontSize: "12px", marginRight: "8px" }}>
+              Size:
+            </label>
+            <button
+              className="RichTextEditor-mediaToolbarButton"
+              onClick={() => resizeMedia("small")}
+            >
+              Small
+            </button>
+            <button
+              className="RichTextEditor-mediaToolbarButton"
+              onClick={() => resizeMedia("medium")}
+            >
+              Medium
+            </button>
+            <button
+              className="RichTextEditor-mediaToolbarButton"
+              onClick={() => resizeMedia("large")}
+            >
+              Large
+            </button>
+            <button
+              className="RichTextEditor-mediaToolbarButton"
+              onClick={() => resizeMedia("full")}
+            >
+              Full width
+            </button>
+            <button
+              className="RichTextEditor-mediaToolbarButton"
+              onClick={() => resizeMedia("original")}
+            >
+              Original
+            </button>
+          </div>
+
+          <div
+            style={{
+              borderLeft: "1px solid #d1d5db",
+              paddingLeft: "12px",
+              marginLeft: "8px"
+            }}
+          >
+            <label style={{ fontSize: "12px", marginRight: "8px" }}>
+              Align:
+            </label>
+            <button
+              className="RichTextEditor-mediaToolbarButton"
+              onClick={() => alignMedia("left")}
+            >
+              Left
+            </button>
+            <button
+              className="RichTextEditor-mediaToolbarButton"
+              onClick={() => alignMedia("center")}
+            >
+              Center
+            </button>
+            <button
+              className="RichTextEditor-mediaToolbarButton"
+              onClick={() => alignMedia("right")}
+            >
+              Right
+            </button>
+          </div>
+
+          <div
+            style={{
+              borderLeft: "1px solid #d1d5db",
+              paddingLeft: "12px",
+              marginLeft: "8px"
+            }}
+          >
+            <button
+              className="RichTextEditor-mediaToolbarButton"
+              onClick={() => {
+                if (selectedMedia) {
+                  selectedMedia.remove();
+                  setSelectedImage(null);
+                  setSelectedMedia(null);
+                  handleContentChange();
+                }
+              }}
+              style={{ color: "#ef4444" }}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      )}
 
       <input
         ref={fileInputRef}
@@ -803,6 +769,14 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
         accept="image/*"
         className="RichTextEditor-hiddenInput"
         onChange={handleImageUpload}
+      />
+
+      <input
+        ref={videoInputRef}
+        type="file"
+        accept="video/*"
+        className="RichTextEditor-hiddenInput"
+        onChange={handleVideoUpload}
       />
     </div>
   );

@@ -1,16 +1,14 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useEffect } from "react";
 import classNames from "classnames";
 
 import { getStorage, setStorage } from "../../lib/utils";
-import {
-  validateText,
-  validateEmail,
-  validatePhoneNumber
-} from "../../lib/validation";
+import { validateText } from "../../lib/validation";
 
 import InputText from "../InputText/InputText";
-import InputToggleText from "../InputToggleText/InputToggleText";
+import InputDropdown from "../InputDropdown/InputDropdown";
+import InputToggle from "../InputToggle/InputToggle";
 import RichTextEditor from "../RichTextEditor/RichTextEditor";
+import Button from "../Button/Button";
 
 import "./MailTemplate.less";
 
@@ -32,6 +30,8 @@ const flags: { [key: string]: string } = {
   en: en
 };
 
+const dropdownOptions = ["Layout 1", "Layout 2", "Layout 3", "Layout 4"];
+
 const placeholderText =
   "Imagine onboarding a new customer and helping them change whole recruitment process of how they hire - not based on a CV or gut feeling, but on potential, skills, and fairness. That's what you'll do at Openrecruit.";
 
@@ -48,11 +48,11 @@ const MailTemplate: FC<MailTemplateProps> = () => {
   const [activeLanguage, setActiveLanguage] = useState(savedLang);
 
   const [title, setTitle] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState<boolean>(false);
+  const [phone, setPhone] = useState<boolean>(false);
   const [subject, setSubject] = useState("");
   const [layout, setLayout] = useState("");
-  const [checked, setChecked] = useState<boolean>(false);
+  const [content, setContent] = useState<any>(null);
 
   const [validationState, setValidationState] = useState(
     initialValidationState
@@ -82,14 +82,6 @@ const MailTemplate: FC<MailTemplateProps> = () => {
     }
   };
 
-  const toggleMenu = () => {
-    setChecked(prev => {
-      const newState = !prev;
-      setStorage("menuToggle", { checked: newState }, 24); // save new state for 24 hours
-      return newState;
-    });
-  };
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -109,10 +101,6 @@ const MailTemplate: FC<MailTemplateProps> = () => {
     const state = {
       ...validationState,
       title: validateText(title),
-      ...(checked
-        ? { phone: validatePhoneNumber(email) }
-        : { email: validateEmail(email) }),
-
       subject: validateText(title),
       layout: validateText(title)
     };
@@ -139,10 +127,23 @@ const MailTemplate: FC<MailTemplateProps> = () => {
     console.log("submit data", userData);
   };
 
+  const handleCancel = () => {
+    console.log("cancel");
+  };
+
   const handleLanguageClick = (langKey: string) => {
     setActiveLanguage(langKey);
     setStorage("locale", { active: langKey });
   };
+
+  useEffect(() => {
+    console.log("Title:", title);
+    console.log("Phone:", phone);
+    console.log("Email:", email);
+    console.log("Subject:", subject);
+    console.log("Layout:", layout);
+    console.log("From Editor:", content);
+  }, [title, phone, email, subject, layout, content]);
 
   return (
     <div className="MailTemplate">
@@ -183,23 +184,24 @@ const MailTemplate: FC<MailTemplateProps> = () => {
             />
           </div>
 
-          <div>
-            <InputToggleText
-              label={"Email"}
-              setValue={setEmail}
-              validate={onChangeValidate}
-              value={email}
-              valid={validationState.email}
-              id={"email"}
-              labelNext={"Phone"}
-              setValueNext={setPhone}
-              validateNext={onChangeValidate}
-              valueNext={phone}
-              validNext={validationState.phone}
-              idNext={"phone"}
-              checked={checked}
-              setChecked={toggleMenu}
-            />
+          <div className="MailTemplate-form-two">
+            <div>
+              <InputToggle
+                checked={email}
+                setChecked={setEmail}
+                id="toggleCheck"
+              />
+              <p>Email</p>
+            </div>
+
+            <div>
+              <InputToggle
+                checked={phone}
+                setChecked={setPhone}
+                id="toggleCheck"
+              />
+              <p>Phone</p>
+            </div>
           </div>
 
           <div>
@@ -214,8 +216,9 @@ const MailTemplate: FC<MailTemplateProps> = () => {
           </div>
 
           <div>
-            <InputText
+            <InputDropdown
               label={"Layout"}
+              options={dropdownOptions}
               setValue={setLayout}
               validate={onChangeValidate}
               value={layout}
@@ -224,15 +227,35 @@ const MailTemplate: FC<MailTemplateProps> = () => {
             />
           </div>
 
-          <div>
-            <RichTextEditor placeholder={placeholderText} />
+          <div className="editor">
+            <RichTextEditor
+              placeholder={placeholderText}
+              onChange={setContent}
+            />
+          </div>
+
+          <div className="buttons">
+            <Button className="cancel" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button className="submit" onClick={() => handleSubmit}>
+              Save
+            </Button>
           </div>
         </div>
       </div>
-      <div className="MailTemplate-container">
-        <div className="MailTemplate">is</div>
-        <div className="MailTemplate">new</div>
-        <div className="MailTemplate">Mail Template</div>
+
+      <div className="MailTemplate-preview">
+        <h4>Preview</h4>
+
+        <div className="MailTemplate-preview-container">
+          <p>Title: {title}</p>
+          <p>Email: {email ? "checked" : "unchecked"}</p>
+          <p>Phone: {phone ? "checked" : "unchecked"}</p>
+          <p>Subject: {subject}</p>
+          <p>Layout: {layout}</p>
+          <div dangerouslySetInnerHTML={{ __html: content || "" }}></div>
+        </div>
       </div>
     </div>
   );

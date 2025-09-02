@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
 
@@ -15,6 +15,7 @@ export default function InputToggleText({
   id,
   valid,
   value,
+  typeNext = "tel",
   labelNext,
   setValueNext,
   validateNext,
@@ -26,32 +27,11 @@ export default function InputToggleText({
   disabled = false,
   ...restProps
 }) {
-  const [focus, setFocus] = useState(false);
-  const [show, setShow] = useState(false);
-  const [inputType, setInputType] = useState(type);
-  const required = restProps.required || false;
-
-  const onFocus = () => {
-    setFocus(true);
-  };
-
-  const onBlur = event => {
-    setFocus(false);
-  };
-
-  const onShow = () => {
-    setShow(!show);
-    type === "password" ? setInputType(show ? "password" : "text") : type;
-  };
-
-  const onChange = event => {
-    setValue(event.target.value);
-    validate(event.target.value);
-  };
-
-  const onToggleChange = event => {
-    setChecked(event.target.checked);
-  };
+  useEffect(() => {
+    // Reset on toggle
+    setValue("");
+    setValueNext("");
+  }, [checked, setValue, setValueNext]);
 
   return (
     <div className="InputToggleText">
@@ -59,6 +39,7 @@ export default function InputToggleText({
 
       {!checked ? (
         <InputText
+          type={type}
           label={label}
           setValue={setValue}
           validate={validate}
@@ -68,7 +49,7 @@ export default function InputToggleText({
         />
       ) : (
         <InputText
-          type="tel"
+          type={typeNext}
           label={labelNext}
           setValue={setValueNext}
           validate={validateNext}
