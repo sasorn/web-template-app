@@ -136,14 +136,14 @@ const MailTemplate: FC<MailTemplateProps> = () => {
     setStorage("locale", { active: langKey });
   };
 
-  useEffect(() => {
-    console.log("Title:", title);
-    console.log("Phone:", phone);
-    console.log("Email:", email);
-    console.log("Subject:", subject);
-    console.log("Layout:", layout);
-    console.log("From Editor:", content);
-  }, [title, phone, email, subject, layout, content]);
+  // useEffect(() => {
+  //   console.log("Title:", title);
+  //   console.log("Phone:", phone);
+  //   console.log("Email:", email);
+  //   console.log("Subject:", subject);
+  //   console.log("Layout:", layout);
+  //   console.log("From Editor:", content);
+  // }, [title, phone, email, subject, layout, content]);
 
   return (
     <div className="MailTemplate">

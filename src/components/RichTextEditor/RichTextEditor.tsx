@@ -201,6 +201,8 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
       reader.onload = event => {
         const result = event.target?.result;
         if (result && editorRef.current) {
+          editorRef.current.focus();
+
           // Create unique ID for the image
           const imageId = `img_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
           const img = `<img id="${imageId}" src="${result}" alt="${file.name}" style="max-width: 100%; height: auto; display: block; margin: 1em 0; cursor: pointer;" data-media-type="image" />`;
@@ -258,6 +260,8 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
       reader.onload = event => {
         const result = event.target?.result;
         if (result && editorRef.current) {
+          editorRef.current.focus();
+
           // Create unique ID for the video
           const videoId = `video_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
           const video = `<p><br></p><video id="${videoId}" controls style="max-width: 100%; height: auto; display: block; margin: 1em 0; cursor: pointer;" data-media-type="video">
@@ -311,7 +315,10 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
   const handleFileUpload = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
-      if (file) {
+
+      if (file && editorRef.current) {
+        editorRef.current.focus();
+
         const fileName = file.name;
         const fileLink = `<a href="#" style="color: #3b82f6; text-decoration: underline;" data-file="${fileName}">📎 ${fileName}</a>`;
         execCommand("insertHTML", fileLink);
