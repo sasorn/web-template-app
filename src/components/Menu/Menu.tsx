@@ -9,6 +9,7 @@ import { getInitials } from "../../lib/utils";
 import { setStorage, getStorage } from "../../lib/utils";
 
 import InputToggle from "../InputToggle/InputToggle";
+import Tooltip from "../Tooltip/Tooltip";
 
 import logo from "./assets/logo.svg";
 import brand from "./assets/brand.svg";
@@ -105,43 +106,60 @@ const Menu: React.FC<MenuProps> = ({ pageName, goToRouteAction }) => {
     <div className="MainMenu">
       <div className={classNames("MainMenu-container", { active: checked })}>
         <div className="MainMenu-items top">
-          <div className={classNames("MainMenu-item logo", { show: checked })}>
-            <img src={logo} alt="logo" />
+          <Tooltip content={"Home"} show={!checked} direction="right">
+            <div
+              className={classNames("MainMenu-item logo", { show: checked })}
+              onClick={() => goToRouteAction({ pageName: "home" })}
+            >
+              <img src={logo} alt="logo" />
 
-            <div>
-              <img src={brand} alt="openreach" />
+              <div>
+                <img src={brand} alt="openreach" />
+              </div>
             </div>
-          </div>
+          </Tooltip>
 
           {topMenu.map(item => (
-            <div
+            <Tooltip
               key={item.classname}
-              className={classNames("MainMenu-item", item.classname, {
-                show: checked,
-                active: pageName === item.classname
-              })}
-              onClick={() => handleClick(item.page)}
+              content={item.name}
+              show={!checked}
+              direction="right"
             >
-              <img src={item.image} alt={item.classname} />
+              <div
+                className={classNames("MainMenu-item", item.classname, {
+                  show: checked,
+                  active: pageName === item.classname
+                })}
+                onClick={() => handleClick(item.page)}
+              >
+                <img src={item.image} alt={item.classname} />
 
-              <div>{item.name}</div>
-            </div>
+                <div>{item.name}</div>
+              </div>
+            </Tooltip>
           ))}
         </div>
 
         <div className="MainMenu-items bottom">
           {bottomMenu.map(item => (
-            <div
+            <Tooltip
               key={item.classname}
-              className={classNames("MainMenu-item", item.classname, {
-                show: checked
-              })}
-              onClick={() => handleClick(item.page)}
+              content={item.name}
+              show={!checked}
+              direction="right"
             >
-              <img src={item.image} alt={item.classname} />
+              <div
+                className={classNames("MainMenu-item", item.classname, {
+                  show: checked
+                })}
+                onClick={() => handleClick(item.page)}
+              >
+                <img src={item.image} alt={item.classname} />
 
-              <div>{item.name}</div>
-            </div>
+                <div>{item.name}</div>
+              </div>
+            </Tooltip>
           ))}
 
           <div

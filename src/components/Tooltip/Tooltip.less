@@ -1,0 +1,51 @@
+.Tooltip {
+  position: relative;
+  display: inline-block;
+
+  .Tooltip-tip {
+    position: absolute;
+    padding: 6px 10px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 1000;
+    font-size: 12px;
+    opacity: 0.9;
+    pointer-events: none;
+    transition: opacity 0.15s;
+
+    &-hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    &.Tooltip-top {
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-bottom: 8px;
+    }
+
+    &.Tooltip-right {
+      top: 50%;
+      left: 100%;
+      transform: translateY(-50%);
+      margin-left: 8px;
+    }
+
+    &.Tooltip-bottom {
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-top: 8px;
+    }
+
+    &.Tooltip-left {
+      top: 50%;
+      right: 100%;
+      transform: translateY(-50%);
+      margin-right: 8px;
+    }
+  }
+}

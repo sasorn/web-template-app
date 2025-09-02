@@ -68,7 +68,9 @@ const InputDropdown = ({
           <div className="InputDropdown-select-list">
             {options.map((optionValue, index) => (
               <div
-                className="InputDropdown-select-list-option"
+                className={classNames("InputDropdown-select-list-option", {
+                  selected: value === optionValue
+                })}
                 onMouseDown={() => onChange(optionValue, index)}
                 key={index}
               >
