@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { goToRoute } from "../../store/actions";
 import { getPageName } from "../../store/selectors";
 
+import Notifications from "./components/Notifications/Notifications";
 import Menu from "./components/Menu/Menu";
 
 import "./Header.less";
@@ -28,6 +29,8 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   return (
     <div className="Header">
+      <Notifications />
+
       <div className="Header-container">
         <h1>{label}</h1>
       </div>

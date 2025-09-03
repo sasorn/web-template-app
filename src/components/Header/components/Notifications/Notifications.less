@@ -1,0 +1,44 @@
+.Notifications {
+  height: 50px;
+  display: flex;
+
+  &-icons {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 0 32px;
+    gap: 10px;
+  }
+
+  &-icon {
+    position: relative;
+
+    div {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      img {
+        width: 24px;
+        height: 24px;
+        display: block;
+      }
+    }
+
+    .badge {
+      width: 8px;
+      height: 8px;
+      background-color: var(--critical-color);
+      outline: 2px solid #fff;
+      display: block;
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      border-radius: 4px;
+    }
+  }
+}
