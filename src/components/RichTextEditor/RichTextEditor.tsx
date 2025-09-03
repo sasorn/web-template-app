@@ -1,6 +1,13 @@
-import React, { FC, useRef, useState, useCallback, useEffect } from "react";
+import React, {
+  FC,
+  useRef,
+  useState,
+  useCallback,
+  useEffect,
+  useMemo
+} from "react";
 
-import Tooltip from "../Tooltip/Tooltip";
+import { getToolbarConfig, ToolbarActions } from "./config/toolbarConfig";
 
 import { useFormatHeading } from "./hooks/useFormatHeading";
 import { useFormatAlign } from "./hooks/useFormatAlign";
@@ -16,25 +23,10 @@ import { useHandleKeyDown } from "./hooks/useHandleKeyDown";
 import { useSimpleFormats } from "./hooks/useSimpleFormats";
 import { useColorPicker } from "./hooks/useColorPicker";
 
-import chevronDown from "./assets/chevronDown.svg";
-import left from "./assets/left.svg";
-import bold from "./assets/bold.svg";
-import italic from "./assets/italic.svg";
-import underline from "./assets/underline.svg";
-import strikethrough from "./assets/strikethrough.svg";
-import inlineCode from "./assets/inlineCode.svg";
-import clearFormatting from "./assets/clearFormatting.svg";
-import bullet from "./assets/bullet.svg";
-import number from "./assets/number.svg";
-import attach from "./assets/attach.svg";
-import image from "./assets/image.svg";
-import video from "./assets/video.svg";
-import blockCode from "./assets/blockCode.svg";
-import quote from "./assets/quote.svg";
-import line from "./assets/line.svg";
-import link from "./assets/link.svg";
+import { Toolbar } from "./components/Toolbar";
+import Tooltip from "../Tooltip/Tooltip";
 
-import colors from "./assets/colors.json";
+import { ASSETS } from "./config/assetsConfig";
 
 import "./RichTextEditor.less";
 import classNames from "classnames";
@@ -44,7 +36,7 @@ interface RichTextEditorProps {
   onChange?: (html: string) => void;
   placeholder?: string;
   height?: string | number;
-  onMediaStaged: (mediaId: string, file: File, blobUrl: string) => void; // to upload image and video files
+  onMediaStaged: (mediaId: string, file: File, blobUrl: string) => void;
 }
 
 const RichTextEditor: FC<RichTextEditorProps> = ({
@@ -57,14 +49,9 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
-  const headingDropdownRef = useRef<HTMLDivElement>(null);
-  const alignDropdownRef = useRef<HTMLDivElement>(null);
 
   const [selectedHeading, setSelectedHeading] = useState("Normal text");
-  const [selectedAlign, setSelectedAlign] = useState("Left");
 
-  const [showHeadingDropdown, setShowHeadingDropdown] = useState(false);
-  const [showAlignDropdown, setShowAlignDropdown] = useState(false);
   const [isEmpty, setIsEmpty] = useState(true);
 
   const headingOptions = [
@@ -83,14 +70,14 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
     { value: "Right", label: "Right" }
   ];
 
-  // Simplified content change handler
+  const colors = ASSETS.data.colors;
+
   const handleContentChange = useCallback(() => {
     if (!editorRef.current || !onChange) return;
 
     const content = editorRef.current.innerHTML;
     const textContent = editorRef.current.textContent || "";
 
-    // Simple empty check
     const hasImages = content.includes("<img");
     const hasVideos = content.includes("<video");
     const hasCode = content.includes("<code");
@@ -106,11 +93,9 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
       !hasQuote;
     setIsEmpty(isCurrentlyEmpty);
 
-    // Send content without aggressive cleaning
     onChange(content);
   }, [onChange]);
 
-  // Initialize editor
   useEffect(() => {
     if (!editorRef.current) return;
 
@@ -124,20 +109,7 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
   }, [initialValue]);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        headingDropdownRef.current &&
-        !headingDropdownRef.current.contains(event.target as Node)
-      ) {
-        setShowHeadingDropdown(false);
-      }
-      if (
-        alignDropdownRef.current &&
-        !alignDropdownRef.current.contains(event.target as Node)
-      ) {
-        setShowAlignDropdown(false);
-      }
-    };
+    const handleClickOutside = (event: MouseEvent) => {};
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -156,16 +128,27 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
     handleContentChange
   });
 
-  const { formatHeading } = useFormatHeading({
+  const {
+    headingDropdownRef,
+    showHeadingDropdown,
+    setShowHeadingDropdown,
+    HeadingDropdown
+  } = useFormatHeading({
     execCommand,
-    setSelectedHeading,
-    setShowHeadingDropdown
+    headingOptions,
+    selectedHeading,
+    setSelectedHeading
   });
 
-  const { formatAlign } = useFormatAlign({
-    execCommand,
+  const {
+    alignDropdownRef,
     setSelectedAlign,
-    setShowAlignDropdown
+    showAlignDropdown,
+    setShowAlignDropdown,
+    AlignDropdown
+  } = useFormatAlign({
+    execCommand,
+    alignOptions
   });
 
   const {
@@ -174,8 +157,12 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
     setSelectedColor,
     showColorPicker,
     setShowColorPicker,
-    formatColor
-  } = useColorPicker({ execCommand });
+    ColorPicker
+  } = useColorPicker({
+    execCommand,
+    colors,
+    TooltipComponent: Tooltip
+  });
 
   const { toggleFormat, toggleList, clearFormat, insertHorizontalRule } =
     useSimpleFormats({
@@ -238,10 +225,39 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
     execCommand
   });
 
+  const toolbarConfig = useMemo(() => {
+    const triggerFileInput = (ref: React.RefObject<HTMLInputElement>) =>
+      ref.current?.click();
+
+    const actions: ToolbarActions = {
+      toggleFormat,
+      toggleList,
+      clearFormat,
+      insertHorizontalRule,
+      openLinkDialog,
+      insertCode,
+      insertCodeBlock,
+      insertQuote,
+      triggerFileInput: ref => ref.current?.click()
+    };
+
+    const refs = { fileInputRef, imageInputRef, videoInputRef };
+
+    return getToolbarConfig(actions, refs);
+  }, [
+    toggleFormat,
+    toggleList,
+    clearFormat,
+    insertHorizontalRule,
+    openLinkDialog,
+    insertCode,
+    insertCodeBlock,
+    insertQuote
+  ]);
+
   return (
     <div className="RichTextEditor-container">
       <div className="RichTextEditor-toolbar">
-        {/* Heading Dropdown */}
         <div className="RichTextEditor-dropdown" ref={headingDropdownRef}>
           <Tooltip direction="bottom" content="Text format">
             <button
@@ -250,62 +266,38 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
             >
               {selectedHeading}
               <span
-                className={`RichTextEditor-dropdownArrow ${showHeadingDropdown ? "open" : ""}`}
+                className={classNames("RichTextEditor-dropdownArrow", {
+                  open: showHeadingDropdown
+                })}
               >
-                <img src={chevronDown} alt="Select heading" />
+                <img src={ASSETS.icons.chevronDown} alt="Select heading" />
               </span>
             </button>
           </Tooltip>
 
-          {showHeadingDropdown && (
-            <div className="RichTextEditor-dropdownMenu">
-              {headingOptions.map(option => (
-                <button
-                  key={option.value}
-                  className={`RichTextEditor-dropdownItem ${selectedHeading === option.value ? "selected" : ""}`}
-                  onClick={() => formatHeading(option.value)}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          )}
+          <HeadingDropdown />
         </div>
 
-        {/* Align Dropdown */}
         <div className="RichTextEditor-dropdown" ref={alignDropdownRef}>
           <Tooltip direction="bottom" content="Text alignment">
             <button
               className="RichTextEditor-dropdownButton pr align"
               onClick={() => setShowAlignDropdown(!showAlignDropdown)}
             >
-              <img src={left} alt="Text alignment" />
+              <img src={ASSETS.icons.left} alt="Text alignment" />
               <span
-                className={`RichTextEditor-dropdownArrow ${showAlignDropdown ? "open" : ""}`}
+                className={classNames("RichTextEditor-dropdownArrow", {
+                  open: showAlignDropdown
+                })}
               >
-                <img src={chevronDown} alt="Text alignment" />
+                <img src={ASSETS.icons.chevronDown} alt="Text alignment" />
               </span>
             </button>
           </Tooltip>
 
-          {showAlignDropdown && (
-            <div className="RichTextEditor-dropdownMenu">
-              {alignOptions.map(option => (
-                <button
-                  key={option.value}
-                  className={classNames("RichTextEditor-dropdownItem", {
-                    selected: selectedAlign === option.value
-                  })}
-                  onClick={() => formatAlign(option.value)}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          )}
+          <AlignDropdown />
         </div>
 
-        {/* Color Picker */}
         <div className="RichTextEditor-colorPicker" ref={colorPickerRef}>
           <Tooltip direction="bottom" content="Text Color">
             <button
@@ -316,154 +308,20 @@ const RichTextEditor: FC<RichTextEditorProps> = ({
                 className="picker"
                 style={{ backgroundColor: selectedColor }}
               ></div>
-
               <span
-                className={`RichTextEditor-dropdownArrow ${showColorPicker ? "open" : ""}`}
+                className={classNames("RichTextEditor-dropdownArrow", {
+                  open: showColorPicker
+                })}
               >
-                <img src={chevronDown} alt="Select color" />
+                <img src={ASSETS.icons.chevronDown} alt="Select color" />
               </span>
             </button>
           </Tooltip>
 
-          {showColorPicker && (
-            <div className="RichTextEditor-colorGrid">
-              {colors.map(color => (
-                <Tooltip
-                  key={color.code}
-                  direction="bottom"
-                  content={color.title}
-                >
-                  <button
-                    className="RichTextEditor-colorSwatch"
-                    style={{ backgroundColor: color.code }}
-                    onClick={() => formatColor(color.code)}
-                  />
-                </Tooltip>
-              ))}
-            </div>
-          )}
+          <ColorPicker />
         </div>
 
-        {/* Format Buttons */}
-        <Tooltip direction="bottom" content="Bold">
-          <button
-            className="RichTextEditor-button"
-            onClick={() => toggleFormat("bold")}
-          >
-            <img src={bold} alt="Bold" />
-          </button>
-        </Tooltip>
-
-        <Tooltip direction="bottom" content="Italic">
-          <button
-            className="RichTextEditor-button"
-            onClick={() => toggleFormat("italic")}
-          >
-            <img src={italic} alt="Italic" />
-          </button>
-        </Tooltip>
-
-        <Tooltip direction="bottom" content="Underline">
-          <button
-            className="RichTextEditor-button"
-            onClick={() => toggleFormat("underline")}
-          >
-            <img src={underline} alt="Underline" />
-          </button>
-        </Tooltip>
-
-        <Tooltip direction="bottom" content="Strikethrough">
-          <button
-            className="RichTextEditor-button"
-            onClick={() => toggleFormat("strikeThrough")}
-          >
-            <img src={strikethrough} alt="Strikethrough" />
-          </button>
-        </Tooltip>
-
-        <Tooltip direction="bottom" content="Insert link">
-          <button className="RichTextEditor-button" onClick={openLinkDialog}>
-            <img src={link} alt="Insert link" />
-          </button>
-        </Tooltip>
-
-        <Tooltip direction="bottom" content="Inline code">
-          <button className="RichTextEditor-button" onClick={insertCode}>
-            <img src={inlineCode} alt="Inline code" />
-          </button>
-        </Tooltip>
-
-        <Tooltip direction="bottom" content="Clear format">
-          <button className="RichTextEditor-button pr" onClick={clearFormat}>
-            <img src={clearFormatting} alt="Clear format" />
-          </button>
-        </Tooltip>
-
-        <Tooltip direction="bottom" content="Bullet list">
-          <button
-            className="RichTextEditor-button"
-            onClick={() => toggleList("ul")}
-          >
-            <img src={bullet} alt="Bullet list" />
-          </button>
-        </Tooltip>
-
-        <Tooltip direction="bottom" content="Numbered list">
-          <button
-            className="RichTextEditor-button pr"
-            onClick={() => toggleList("ol")}
-          >
-            <img src={number} alt="Numbered list" />
-          </button>
-        </Tooltip>
-
-        <Tooltip direction="bottom" content="Attach file">
-          <button
-            className="RichTextEditor-button"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <img src={attach} alt="Attach file" />
-          </button>
-        </Tooltip>
-
-        <Tooltip direction="bottom" content="Insert image">
-          <button
-            className="RichTextEditor-button"
-            onClick={() => imageInputRef.current?.click()}
-          >
-            <img src={image} alt="Insert image" />
-          </button>
-        </Tooltip>
-
-        <Tooltip direction="bottom" content="Insert video">
-          <button
-            className="RichTextEditor-button"
-            onClick={() => videoInputRef.current?.click()}
-          >
-            <img src={video} alt="Insert video" />
-          </button>
-        </Tooltip>
-
-        <Tooltip direction="bottom" content="Code block">
-          <button className="RichTextEditor-button" onClick={insertCodeBlock}>
-            <img src={blockCode} alt="Code block" />
-          </button>
-        </Tooltip>
-
-        <Tooltip direction="bottom" content="Quote">
-          <button className="RichTextEditor-button" onClick={insertQuote}>
-            <img src={quote} alt="Quote" />
-          </button>
-        </Tooltip>
-
-        <Tooltip direction="bottom" content="Horizontal rule">
-          <button
-            className="RichTextEditor-button"
-            onClick={() => execCommand("insertHorizontalRule")}
-          >
-            <img src={line} alt="Horizontal rule" />
-          </button>
-        </Tooltip>
+        <Toolbar config={toolbarConfig} TooltipComponent={Tooltip} />
       </div>
 
       <div

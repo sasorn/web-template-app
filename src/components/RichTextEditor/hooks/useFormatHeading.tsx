@@ -1,24 +1,84 @@
-import { useCallback, Dispatch, SetStateAction } from "react";
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  FC,
+  Dispatch,
+  SetStateAction
+} from "react";
+import classNames from "classnames";
 
-// Define the arguments the hook will need
-interface FormatHeadingProps {
-  execCommand: (command: string, value: string) => void;
+// --- Helper UI Component for the Dropdown Menu ---
+interface HeadingDropdownComponentProps {
+  show: boolean;
+  headingOptions: { value: string; label: string }[];
+  selectedHeading: string;
+  formatHeading: (heading: string) => void;
+}
+
+const HeadingDropdownComponent: FC<HeadingDropdownComponentProps> = ({
+  show,
+  headingOptions,
+  selectedHeading,
+  formatHeading
+}) => {
+  if (!show) {
+    return null;
+  }
+
+  return (
+    <div className="RichTextEditor-dropdownMenu">
+      {headingOptions.map(option => (
+        <button
+          key={option.value}
+          className={classNames("RichTextEditor-dropdownItem", {
+            selected: selectedHeading === option.value
+          })}
+          onClick={() => formatHeading(option.value)}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+// --- Custom Hook ---
+interface UseFormatHeadingProps {
+  execCommand: (command: string, value?: string | boolean) => void;
+  headingOptions: { value: string; label: string }[];
+  selectedHeading: string;
   setSelectedHeading: Dispatch<SetStateAction<string>>;
-  setShowHeadingDropdown: Dispatch<SetStateAction<boolean>>;
 }
 
 export const useFormatHeading = ({
   execCommand,
-  setSelectedHeading,
-  setShowHeadingDropdown
-}: FormatHeadingProps) => {
+  headingOptions,
+  selectedHeading,
+  setSelectedHeading
+}: UseFormatHeadingProps) => {
+  const headingDropdownRef = useRef<HTMLDivElement>(null);
+  const [showHeadingDropdown, setShowHeadingDropdown] = useState(false);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        headingDropdownRef.current &&
+        !headingDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowHeadingDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const formatHeading = useCallback(
     (heading: string) => {
-      // Set the state in the main component
       setSelectedHeading(heading);
       setShowHeadingDropdown(false);
 
-      // Execute the command
       if (heading === "Normal text") {
         execCommand("formatBlock", "p");
       } else {
@@ -26,9 +86,26 @@ export const useFormatHeading = ({
         execCommand("formatBlock", `h${level}`);
       }
     },
-    [execCommand, setSelectedHeading, setShowHeadingDropdown]
+    [execCommand, setSelectedHeading]
   );
 
-  // Return the function so the component can use it
-  return { formatHeading };
+  const HeadingDropdown = useCallback(
+    () => (
+      <HeadingDropdownComponent
+        show={showHeadingDropdown}
+        headingOptions={headingOptions}
+        selectedHeading={selectedHeading}
+        formatHeading={formatHeading}
+      />
+    ),
+    [showHeadingDropdown, headingOptions, selectedHeading, formatHeading]
+  );
+
+  return {
+    headingDropdownRef,
+    showHeadingDropdown,
+    setShowHeadingDropdown,
+    formatHeading,
+    HeadingDropdown // The component to be rendered
+  };
 };

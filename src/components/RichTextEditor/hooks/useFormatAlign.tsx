@@ -1,26 +1,72 @@
-// /hooks/useFormatAlign.tsx
+import React, { useState, useCallback, useRef, useEffect, FC } from "react";
+import classNames from "classnames";
 
-import { useCallback, Dispatch, SetStateAction } from "react";
+interface AlignDropdownComponentProps {
+  show: boolean;
+  alignOptions: { value: string; label: string }[];
+  selectedAlign: string;
+  formatAlign: (align: string) => void;
+}
 
-// Define the types for the arguments the hook will need
-interface FormatAlignProps {
+const AlignDropdownComponent: FC<AlignDropdownComponentProps> = ({
+  show,
+  alignOptions,
+  selectedAlign,
+  formatAlign
+}) => {
+  if (!show) {
+    return null;
+  }
+
+  return (
+    <div className="RichTextEditor-dropdownMenu">
+      {alignOptions.map(option => (
+        <button
+          key={option.value}
+          className={classNames("RichTextEditor-dropdownItem", {
+            selected: selectedAlign === option.value
+          })}
+          onClick={() => formatAlign(option.value)}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+// --- Custom Hook ---
+interface UseFormatAlignProps {
   execCommand: (command: string, value?: string | boolean) => void;
-  setSelectedAlign: Dispatch<SetStateAction<string>>;
-  setShowAlignDropdown: Dispatch<SetStateAction<boolean>>;
+  alignOptions: { value: string; label: string }[];
 }
 
 export const useFormatAlign = ({
   execCommand,
-  setSelectedAlign,
-  setShowAlignDropdown
-}: FormatAlignProps) => {
+  alignOptions
+}: UseFormatAlignProps) => {
+  const alignDropdownRef = useRef<HTMLDivElement>(null);
+  const [selectedAlign, setSelectedAlign] = useState("Left");
+  const [showAlignDropdown, setShowAlignDropdown] = useState(false);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        alignDropdownRef.current &&
+        !alignDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowAlignDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const formatAlign = useCallback(
     (align: string) => {
-      // Set the state in the main component
       setSelectedAlign(align);
       setShowAlignDropdown(false);
 
-      // Execute the correct command based on the align value
       const alignValue = align.toLowerCase();
       if (alignValue === "left") {
         execCommand("justifyLeft");
@@ -30,9 +76,28 @@ export const useFormatAlign = ({
         execCommand("justifyRight");
       }
     },
-    [execCommand, setSelectedAlign, setShowAlignDropdown]
+    [execCommand]
   );
 
-  // Return the function so the main component can use it
-  return { formatAlign };
+  const AlignDropdown = useCallback(
+    () => (
+      <AlignDropdownComponent
+        show={showAlignDropdown}
+        alignOptions={alignOptions}
+        selectedAlign={selectedAlign}
+        formatAlign={formatAlign}
+      />
+    ),
+    [showAlignDropdown, alignOptions, selectedAlign, formatAlign]
+  );
+
+  return {
+    alignDropdownRef,
+    selectedAlign,
+    setSelectedAlign, // Expose for useSimpleFormats (clearFormat)
+    showAlignDropdown,
+    setShowAlignDropdown,
+    formatAlign,
+    AlignDropdown // The component to be rendered
+  };
 };
