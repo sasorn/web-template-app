@@ -209,7 +209,6 @@ const ProfileTemplate: FC = () => {
           />
 
           <InputDropdown
-            label={"Currency"}
             options={currencyOptions}
             setValue={setCurrency}
             validate={onChangeValidate}
@@ -220,7 +219,6 @@ const ProfileTemplate: FC = () => {
           />
 
           <InputDropdown
-            label={"Duration"}
             options={durationOptions}
             setValue={setDuration}
             validate={onChangeValidate}
