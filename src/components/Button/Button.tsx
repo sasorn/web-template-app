@@ -3,7 +3,15 @@ import classNames from "classnames";
 
 import "./Button.less";
 
-type Variant = "ghost" | "dark" | "link" | "critical" | "rounded";
+type Variant =
+  | "ghost"
+  | "dark"
+  | "link"
+  | "critical"
+  | "rounded"
+  | "light"
+  | "cancel";
+
 type Size = "small" | "";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -13,19 +21,6 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: Size;
   className?: string;
 }
-
-/** Examples:
- * Watch the `variants`
- *
- * <Button variant="ghost" onClick={handleClick}>Text</Button>
- *
- * <Button
- *   variant={["ghost", "rounded"]}
- *   onClick={() => handleClick(el)}
- * >
- *   New folder
- * </Button>
- */
 
 const Button: FC<ButtonProps> = ({
   disabled = false,
