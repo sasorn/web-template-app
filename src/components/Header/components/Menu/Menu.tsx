@@ -21,7 +21,7 @@ const Menu: React.FC<MenuProps> = ({ pageName, goToRouteAction, data }) => {
           <div
             key={index}
             className={classNames("Menu-item", {
-              active: pageName === item.page
+              active: item.active?.includes(pageName)
             })}
             onClick={() => handleClick(item.page)}
           >

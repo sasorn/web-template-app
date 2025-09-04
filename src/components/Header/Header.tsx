@@ -16,10 +16,20 @@ interface HeaderProps {
 }
 
 const items = [
-  { name: "Overview", page: "templates" },
-  { name: "Messages", count: "8", page: "messages" },
-  { name: "Profile type", count: "8", page: "profile" },
-  { name: "Themes", page: "themes" }
+  { name: "Overview", page: "templates", active: ["templates"] },
+  {
+    name: "Messages",
+    count: "8",
+    page: "messages",
+    active: ["messages", "newMailTemplate"]
+  },
+  {
+    name: "Profile type",
+    count: "8",
+    page: "profile",
+    active: ["profile", "newProfileTemplate"]
+  },
+  { name: "Themes", page: "themes", active: ["themes"] }
 ];
 
 const Header: React.FC<HeaderProps> = ({
