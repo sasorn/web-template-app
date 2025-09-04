@@ -12,6 +12,7 @@ export default function InputText({
   id,
   valid,
   value,
+  size = "default",
   ...restProps
 }) {
   const [focus, setFocus] = useState(false);
@@ -39,11 +40,15 @@ export default function InputText({
 
   return (
     <div
-      className={classNames("InputText", {
-        focus: focus || value !== "",
-        error: !valid,
-        entry: value !== ""
-      })}
+      className={classNames(
+        "InputText",
+        {
+          focus: focus || value !== "",
+          error: !valid,
+          entry: value !== ""
+        },
+        size !== "default" && `${size}`
+      )}
       {...restProps}
     >
       <input
@@ -72,5 +77,6 @@ InputText.propTypes = {
   setValue: PropTypes.func.isRequired,
   validate: PropTypes.func.isRequired,
   valid: PropTypes.bool.isRequired,
-  value: PropTypes.string.isRequired
+  value: PropTypes.string.isRequired,
+  size: PropTypes.oneOf(["default", "small"])
 };

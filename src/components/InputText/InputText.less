@@ -72,6 +72,25 @@
     }
   }
 
+  &.small {
+    height: 28px;
+    background-color: #fff;
+
+    label {
+      line-height: 0;
+    }
+
+    &.focus {
+      label {
+        padding: 0 12px;
+        top: -8px;
+      }
+      input {
+        padding: 0 12px;
+      }
+    }
+  }
+
   & + .FormError {
     margin: 0;
   }

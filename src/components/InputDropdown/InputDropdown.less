@@ -79,6 +79,43 @@
       }
     }
 
+    &.small {
+      .InputDropdown {
+        &-select-option {
+          height: 28px;
+          background-color: #fff;
+        }
+
+        &-label {
+          line-height: 0;
+        }
+      }
+
+      &.entry {
+        .InputDropdown {
+          &-label {
+            top: -8px;
+            padding: 0 16px;
+          }
+
+          &-select-option > span {
+            padding: 0 16px;
+            line-height: 30px;
+          }
+        }
+      }
+
+      .chevron-wrapper {
+        top: 5.9px;
+        right: 16px;
+      }
+
+      &.focus {
+        input {
+        }
+      }
+    }
+
     &.error {
       .InputDropdown-select-option {
         border: 1px solid #ff9c9c;

@@ -1,7 +1,42 @@
 import React, { FC, useState, useCallback } from "react";
+
 import BasicInformation from "../BasicInformation/BasicInformation";
 import Skills from "../Skills/Skills";
+import InputRadio from "../InputRadio/InputRadio";
+import InputText from "../InputText/InputText";
+import InputDropdown from "../InputDropdown/InputDropdown";
+
 import "./ProfileTemplate.less";
+
+const requirementsOptions = [
+  { label: "Drivers licence required", radio: ["Yes", "No"] },
+  { label: "Security clearance required", radio: ["Yes", "No"] },
+  { label: "Physical requirements", radio: ["Yes", "No"] },
+  { label: "Pension", radio: ["Yes", "No"] },
+  { label: "Company car", radio: ["Yes", "No"] }
+];
+
+const bonusOptions = [
+  { label: "Bonus", radio: ["Yes", "No"] },
+  { label: "Commision fee", radio: ["Yes", "No"] },
+  { label: "Equity or stock options", radio: ["Yes", "No"] },
+  { label: "Employee shares", radio: ["Yes", "No"] }
+];
+
+const currencyOptions = ["DKK", "GBP", "USD", "EUR"];
+
+const durationOptions = ["Monthly", "Annually"];
+
+interface RadioProps {
+  [key: string]: string;
+}
+
+const initialValidationState = {
+  minSalary: true,
+  maxSalary: true,
+  currency: true,
+  duration: true
+};
 
 const ProfileTemplate: FC = () => {
   const [basicInfo, setBasicInfo] = useState({});
@@ -9,6 +44,40 @@ const ProfileTemplate: FC = () => {
   const [personal, setPersonal] = useState<string[]>([]);
   const [professional, setProfessional] = useState<string[]>([]);
   const [other, setOther] = useState<string[]>([]);
+  const [requirements, setRequirements] = useState<RadioProps>({});
+  const [bonus, setBonus] = useState<RadioProps>({});
+  const [minSalary, setMinSalary] = useState<string>("");
+  const [maxSalary, setMaxSalary] = useState<string>("");
+  const [currency, setCurrency] = useState<string>("DKK");
+  const [duration, setDuration] = useState<string>("Monthly");
+
+  const [validationState, setValidationState] = useState(
+    initialValidationState
+  );
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+
+  const isFormValid = () => {
+    // is there any validation that failed?
+    for (const entry in validationState) {
+      const key = entry as keyof typeof validationState;
+
+      if (!validationState[key]) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const onChangeValidate = () => {
+    if (isButtonDisabled) {
+      setIsButtonDisabled(false);
+    }
+    if (!isFormValid()) {
+      setValidationState(initialValidationState);
+    }
+  };
 
   // Memoized helper to get state and setter functions
   const getTagsAndSetter = useCallback(
@@ -50,6 +119,13 @@ const ProfileTemplate: FC = () => {
     [getTagsAndSetter]
   );
 
+  const handleRadioChange = (label: string, value: string) => {
+    setRequirements(prevRequirements => ({
+      ...prevRequirements,
+      [label]: value
+    }));
+  };
+
   return (
     <div className="ProfileTemplate">
       <BasicInformation
@@ -66,7 +142,7 @@ const ProfileTemplate: FC = () => {
       <Skills
         header="Personal"
         tags={personal}
-        setTags={setPersonal} // Now properly passing setTags
+        setTags={setPersonal}
         onMoveTag={handleMoveTag}
         containerId="personal"
         buttonText={"Add skill"}
@@ -75,7 +151,7 @@ const ProfileTemplate: FC = () => {
       <Skills
         header="Professional"
         tags={professional}
-        setTags={setProfessional} // Now properly passing setTags
+        setTags={setProfessional}
         onMoveTag={handleMoveTag}
         containerId="professional"
         buttonText={"Add skill"}
@@ -84,11 +160,91 @@ const ProfileTemplate: FC = () => {
       <Skills
         header="Other"
         tags={other}
-        setTags={setOther} // Now properly passing setTags
+        setTags={setOther}
         onMoveTag={handleMoveTag}
         containerId="other"
         buttonText={"Add skill"}
       />
+
+      <div className="ProfileTemplate-radio">
+        {requirementsOptions.map((option, index) => (
+          <InputRadio
+            key={index}
+            id={`requirement-${index}`}
+            label={option.label}
+            options={option.radio}
+            selectedValue={requirements[option.label]}
+            onChange={(value: string) => handleRadioChange(option.label, value)}
+            valid={!!requirements[option.label]}
+          />
+        ))}
+      </div>
+
+      <div className="ProfileTemplate-header">
+        <h4>Compensation</h4>
+      </div>
+
+      <div className="ProfileTemplate-Compensation">
+        <p>Expected salary range</p>
+
+        <div>
+          <InputText
+            label={"Minimum"}
+            setValue={setMinSalary}
+            validate={onChangeValidate}
+            value={minSalary}
+            valid={validationState.minSalary}
+            id={"minSalary"}
+            size="small"
+          />
+
+          <InputText
+            label={"Maximum"}
+            setValue={setMaxSalary}
+            validate={onChangeValidate}
+            value={maxSalary}
+            valid={validationState.maxSalary}
+            id={"maxSalary"}
+            size="small"
+          />
+
+          <InputDropdown
+            label={"Currency"}
+            options={currencyOptions}
+            setValue={setCurrency}
+            validate={onChangeValidate}
+            value={currency}
+            valid={validationState.currency}
+            id={"currency"}
+            size="small"
+          />
+
+          <InputDropdown
+            label={"Duration"}
+            options={durationOptions}
+            setValue={setDuration}
+            validate={onChangeValidate}
+            value={duration}
+            valid={validationState.duration}
+            id={"duration"}
+            size="small"
+          />
+        </div>
+      </div>
+
+      <div className="ProfileTemplate-radio">
+        {bonusOptions.map((option, index) => (
+          <InputRadio
+            key={index}
+            id={`bonus-${index}`}
+            label={option.label}
+            options={option.radio}
+            selectedValue={bonus[option.label]}
+            onChange={(value: string) => handleRadioChange(option.label, value)}
+            valid={!!bonus[option.label]}
+          />
+        ))}
+      </div>
     </div>
   );
 };

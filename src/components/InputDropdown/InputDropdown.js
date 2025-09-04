@@ -17,6 +17,7 @@ const InputDropdown = ({
   valid,
   value,
   options,
+  size = "default",
   ...restProps
 }) => {
   const [focus, setFocus] = useState(false);
@@ -49,11 +50,15 @@ const InputDropdown = ({
   return (
     <div className="InputDropdown">
       <div
-        className={classNames("InputDropdown-select", {
-          focus: focus,
-          entry: !!value,
-          error: !valid
-        })}
+        className={classNames(
+          "InputDropdown-select",
+          {
+            focus: focus,
+            entry: !!value,
+            error: !valid
+          },
+          size !== "default" && `${size}`
+        )}
         {...restProps}
       >
         <div className="InputDropdown-label">{label}</div>
@@ -111,7 +116,8 @@ InputDropdown.propTypes = {
   validate: PropTypes.func.isRequired,
   setValue: PropTypes.any.isRequired,
   id: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired
+  value: PropTypes.any.isRequired,
+  size: PropTypes.oneOf(["default", "small"])
 };
 
 export default InputDropdown;
