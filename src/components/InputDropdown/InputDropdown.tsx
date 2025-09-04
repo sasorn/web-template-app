@@ -1,15 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
-import PropTypes from "prop-types";
 import classNames from "classnames";
-
 import "./InputDropdown.less";
 
-/*
-Example:
-options: ["option1", "option2", "option3"]
-*/
+interface InputDropdownProps {
+  id: string;
+  value: string;
+  setValue: (val: string) => void;
+  validate: (val: { value: string }) => void;
+  valid: boolean;
+  options: string[];
+  size?: "default" | "small";
+  label?: string; // 👈 optional
+}
 
-const InputDropdown = ({
+const InputDropdown: React.FC<InputDropdownProps> = ({
   label,
   setValue,
   validate,
@@ -21,30 +25,27 @@ const InputDropdown = ({
   ...restProps
 }) => {
   const [focus, setFocus] = useState(false);
-  const refDropdown = useRef(null);
+  const refDropdown = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleClickOutside = event => {
-      if (refDropdown.current && !refDropdown.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        refDropdown.current &&
+        !refDropdown.current.contains(event.target as Node)
+      ) {
         setFocus(false);
       }
     };
-
     window.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      window.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => window.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleOpenList = () => {
-    setFocus(!focus);
-  };
+  const handleOpenList = () => setFocus(!focus);
 
-  const onChange = (value, index) => {
-    setValue(value);
+  const onChange = (val: string, index: number) => {
+    setValue(val);
     setFocus(false);
-    validate({ value });
+    validate({ value: val });
   };
 
   return (
@@ -52,16 +53,12 @@ const InputDropdown = ({
       <div
         className={classNames(
           "InputDropdown-select",
-          {
-            focus: focus,
-            entry: !!value,
-            error: !valid
-          },
+          { focus, entry: !!value, error: !valid },
           size !== "default" && `${size}`
         )}
         {...restProps}
       >
-        <div className="InputDropdown-label">{label}</div>
+        {label && <div className="InputDropdown-label">{label}</div>}
         <div
           className="InputDropdown-select-option"
           onClick={handleOpenList}
@@ -84,7 +81,6 @@ const InputDropdown = ({
             ))}
           </div>
         )}
-
         <div className="chevron-wrapper">
           <svg
             className="chevron"
@@ -107,17 +103,6 @@ const InputDropdown = ({
       </div>
     </div>
   );
-};
-
-InputDropdown.propTypes = {
-  valid: PropTypes.bool.isRequired,
-  label: PropTypes.string.isRequired,
-  options: PropTypes.array.isRequired,
-  validate: PropTypes.func.isRequired,
-  setValue: PropTypes.any.isRequired,
-  id: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-  size: PropTypes.oneOf(["default", "small"])
 };
 
 export default InputDropdown;
