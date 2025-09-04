@@ -28,34 +28,33 @@
     }
   }
 
-  // Time Picker
   &-select {
     position: relative;
     width: 100%;
     z-index: 11;
 
-    &:after {
-      content: "";
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      border-right: 2px solid var(--border-primary-color);
-      border-bottom: 2px solid var(--border-primary-color);
-      top: 18px;
-      right: 20px;
-      rotate: 45deg;
-      pointer-events: none;
+    .chevron {
+      &-wrapper {
+        position: absolute;
+        width: 14px;
+        height: 8px;
+        background-size: contain;
+        display: inline-block;
+        top: 17px;
+        right: 20px;
+        pointer-events: none;
+      }
+
+      &-path {
+        transition: d 0.3s ease;
+      }
     }
 
     &.focus {
       z-index: 12;
 
-      &:after {
-        border-bottom: 0 none;
-        border-top: 2px solid var(--border-primary-color);
-        border-right: 0 none;
-        border-left: 2px solid var(--border-primary-color);
-        top: 24px;
+      .chevron-path {
+        d: path("M1 7L7 1L13 7");
       }
     }
 
@@ -63,8 +62,8 @@
       position: relative;
       display: flex;
       height: 50px;
-      background: var(--background-color);
-      border: 1px solid var(--border-primary-color);
+      background: var(--background-color-light);
+      border: 1px solid var(--border-input-color);
       border-radius: 8px;
       cursor: pointer;
 
@@ -88,7 +87,7 @@
 
       &.focus {
         .InputDropdown-select-option {
-          border-bottom-color: var(--border-primary-color);
+          border-bottom-color: var(--border-input-color);
         }
 
         .InputDropdown-select-list {
@@ -104,22 +103,22 @@
       overflow-y: auto;
       height: auto;
       max-height: 313px;
-      background: var(--background-color);
-      border: 1px solid var(--border-primary-color);
+      background: var(--background-color-light);
+      border: 1px solid var(--border-input-color);
       border-top: 0 none;
       border-radius: 0 0 8px 8px;
 
       &-option {
         display: block;
         height: 49px;
-        border-bottom: 1px solid var(--border-primary-color);
+        border-bottom: 1px solid var(--border-input-color);
 
         &:last-of-type {
           border-bottom: 0 none;
         }
 
         &:hover {
-          background-color: var(--border-primary-color);
+          background-color: var(--border-input-color);
           cursor: pointer;
         }
 

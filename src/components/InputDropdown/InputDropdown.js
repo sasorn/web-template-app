@@ -62,7 +62,7 @@ const InputDropdown = ({
           onClick={handleOpenList}
           ref={refDropdown}
         >
-          {!!value && <span>{value}</span>}
+          {!!value && <span className="noselect">{value}</span>}
         </div>
         {focus && (
           <div className="InputDropdown-select-list">
@@ -74,11 +74,31 @@ const InputDropdown = ({
                 onMouseDown={() => onChange(optionValue, index)}
                 key={index}
               >
-                <span>{optionValue}</span>
+                <span className="noselect">{optionValue}</span>
               </div>
             ))}
           </div>
         )}
+
+        <div className="chevron-wrapper">
+          <svg
+            className="chevron"
+            width="14"
+            height="8"
+            viewBox="0 0 14 8"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              className="chevron-path"
+              d="M1 1L7 7L13 1"
+              fill="transparent"
+              stroke="rgba(189, 184, 178, 1)"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
       </div>
     </div>
   );

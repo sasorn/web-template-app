@@ -19,9 +19,9 @@ interface CreateTemplateProps {
 }
 
 const buttons = [
-  { label: "Mail template", icon: mail },
-  { label: "Profile type", icon: bolt },
-  { label: "Header text", icon: diamond }
+  { label: "Mail template", icon: mail, pageName: "newMailTemplate" },
+  { label: "Profile type", icon: bolt, pageName: "newProfileTemplate" },
+  { label: "Header text", icon: diamond, pageName: "" }
 ];
 
 const CreateTemplateModal: React.FC<CreateTemplateProps> = ({
@@ -32,13 +32,9 @@ const CreateTemplateModal: React.FC<CreateTemplateProps> = ({
     closeCreateTemplateAction();
   };
 
-  const handleClick = (el: string) => {
-    if (el === "Mail template") {
-      closeCreateTemplateAction();
-      goToRouteAction({ pageName: "newMailTemplate" });
-    } else {
-      console.log("clicked");
-    }
+  const handleClick = (pageName: string) => {
+    goToRouteAction({ pageName: pageName });
+    closeCreateTemplateAction();
   };
 
   return (
@@ -53,7 +49,7 @@ const CreateTemplateModal: React.FC<CreateTemplateProps> = ({
             <div
               key={index}
               className="CreateTemplateModal-button"
-              onClick={() => handleClick(button.label)}
+              onClick={() => handleClick(button.pageName)}
             >
               <div>
                 <img src={button.icon} alt={button.label} />
