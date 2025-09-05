@@ -1,5 +1,13 @@
-.SortSkills {
+.SortList {
   margin-bottom: 24px;
+
+  &-container:not(.is-dragging-active) &-skill:hover {
+    background-color: var(--hover-color);
+
+    .trash {
+      opacity: 1;
+    }
+  }
 
   &-skill {
     display: flex;
@@ -85,12 +93,6 @@
           filter: none;
           opacity: 1;
         }
-      }
-    }
-
-    &:hover {
-      .trash {
-        opacity: 1;
       }
     }
 

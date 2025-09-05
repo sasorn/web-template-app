@@ -5,7 +5,7 @@ import Skills from "../Skills/Skills";
 import InputRadio from "../InputRadio/InputRadio";
 import InputText from "../InputText/InputText";
 import InputDropdown from "../InputDropdown/InputDropdown";
-import SortSkills from "../SortSkills/SortSkills";
+import SortList from "../SortList/SortList";
 import Button from "../Button/Button";
 
 import "./ProfileTemplate.less";
@@ -122,8 +122,15 @@ const ProfileTemplate: FC = () => {
     [getTagsAndSetter]
   );
 
-  const handleRadioChange = (label: string, value: string) => {
+  const handleRequirementsChange = (label: string, value: string) => {
     setRequirements(prevRequirements => ({
+      ...prevRequirements,
+      [label]: value
+    }));
+  };
+
+  const handleBonusChange = (label: string, value: string) => {
+    setBonus(prevRequirements => ({
       ...prevRequirements,
       [label]: value
     }));
@@ -131,7 +138,18 @@ const ProfileTemplate: FC = () => {
 
   const handleSkillsChange = (updatedSkills: string[]) => {
     setSkills(updatedSkills);
-    console.log("Skills updated in parent:", updatedSkills);
+    // console.log("Skills updated in parent:", updatedSkills);
+  };
+
+  const handleSubmit = () => {
+    console.log(
+      basicInfo,
+      "Skills:",
+      { personal, professional, other },
+      requirements,
+      bonus,
+      skills
+    );
   };
 
   return (
@@ -182,7 +200,9 @@ const ProfileTemplate: FC = () => {
             label={option.label}
             options={option.radio}
             selectedValue={requirements[option.label]}
-            onChange={(value: string) => handleRadioChange(option.label, value)}
+            onChange={(value: string) =>
+              handleRequirementsChange(option.label, value)
+            }
             valid={!!requirements[option.label]}
           />
         ))}
@@ -246,7 +266,7 @@ const ProfileTemplate: FC = () => {
             label={option.label}
             options={option.radio}
             selectedValue={bonus[option.label]}
-            onChange={(value: string) => handleRadioChange(option.label, value)}
+            onChange={(value: string) => handleBonusChange(option.label, value)}
             valid={!!bonus[option.label]}
           />
         ))}
@@ -256,7 +276,7 @@ const ProfileTemplate: FC = () => {
         <h4>Other benefits</h4>
       </div>
 
-      <SortSkills
+      <SortList
         onSkillsChange={handleSkillsChange}
         placeholder={"Start by adding new benefit"}
         buttonText={"Add benefit"}
@@ -267,7 +287,7 @@ const ProfileTemplate: FC = () => {
         <Button variant="cancel" size="small" onClick={() => {}}>
           Cancel
         </Button>
-        <Button variant="light" size="small" onClick={() => {}}>
+        <Button variant="light" size="small" onClick={handleSubmit}>
           Save
         </Button>
       </div>

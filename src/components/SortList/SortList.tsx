@@ -6,9 +6,9 @@ import Button from "../Button/Button";
 import menu from "./assets/menu.svg";
 import trash from "./assets/trash.svg";
 
-import "./SortSkills.less";
+import "./SortList.less";
 
-interface SortSkillsProps {
+interface SortListProps {
   onSkillsChange: (skills: string[]) => void;
   buttonText: string;
   placeholder: string;
@@ -17,7 +17,7 @@ interface SortSkillsProps {
 
 const DRAG_THRESHOLD = 5; // Pixels to move before drag starts
 
-const SortSkills: FC<SortSkillsProps> = ({
+const SortList: FC<SortListProps> = ({
   onSkillsChange,
   buttonText,
   placeholder,
@@ -115,7 +115,7 @@ const SortSkills: FC<SortSkillsProps> = ({
           dragPointOffsetY = moveEvent.clientY - rect.top;
 
           ghostElement = originalElement.cloneNode(true) as HTMLDivElement;
-          ghostElement.classList.add("SortSkills-ghost");
+          ghostElement.classList.add("SortList-ghost");
           Object.assign(ghostElement.style, {
             position: "fixed",
             top: `${rect.top}px`,
@@ -137,7 +137,7 @@ const SortSkills: FC<SortSkillsProps> = ({
       // Determine placeholder position
       if (!listContainerRef.current) return;
       const listItems = Array.from(listContainerRef.current.children).filter(
-        child => child.classList.contains("SortSkills-skill")
+        child => child.classList.contains("SortList-skill")
       );
 
       let newDragOverIndex = skills.length;
@@ -206,16 +206,21 @@ const SortSkills: FC<SortSkillsProps> = ({
   };
 
   return (
-    <div className="SortSkills">
-      <div className="SortSkills-container" ref={listContainerRef}>
+    <div className="SortList">
+      <div
+        className={classNames("SortList-container", {
+          "is-dragging-active": draggedItemIndex !== null
+        })}
+        ref={listContainerRef}
+      >
         {skills.map((skill, index) => (
           // Use a stable key
           <Fragment key={skill}>
             {dragOverIndex === index && draggedItemIndex !== index && (
-              <div className="SortSkills-placeholder" />
+              <div className="SortList-placeholder" />
             )}
             <div
-              className={classNames("SortSkills-skill", {
+              className={classNames("SortList-skill", {
                 "is-dragging": draggedItemIndex === index
               })}
             >
@@ -237,20 +242,20 @@ const SortSkills: FC<SortSkillsProps> = ({
         ))}
 
         {skills.length < 1 && (
-          <div className="SortSkills-skill-empty">{placeholder}</div>
+          <div className="SortList-skill-empty">{placeholder}</div>
         )}
 
         {/* Placeholder for dropping at the very end of the list */}
         {dragOverIndex === skills.length && (
-          <div className="SortSkills-placeholder" />
+          <div className="SortList-placeholder" />
         )}
       </div>
 
       {showAddInput && (
-        <div className="SortSkills-inputs">
+        <div className="SortList-inputs">
           <div
             ref={inputRef}
-            className="SortSkills-input"
+            className="SortList-input"
             contentEditable
             suppressContentEditableWarning
             onKeyDown={handleInputKeyDown}
@@ -264,7 +269,7 @@ const SortSkills: FC<SortSkillsProps> = ({
         </div>
       )}
 
-      <div className="SortSkills-buttons">
+      <div className="SortList-buttons">
         {showAddInput ? (
           <Button variant="cancel" size="small" onClick={handleHideInput}>
             Close
@@ -279,4 +284,4 @@ const SortSkills: FC<SortSkillsProps> = ({
   );
 };
 
-export default SortSkills;
+export default SortList;
