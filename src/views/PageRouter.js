@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from "react";
 import PropTypes from "prop-types";
-
 import { connect } from "react-redux";
+
 import { getRouterParams } from "../store/selectors";
 
 import DialogManager from "../components/DialogManager/DialogManager";
@@ -16,6 +16,9 @@ const Home = lazy(() => import("../pages/Home/Home"));
 const Templates = lazy(() => import("../pages/Templates/Templates"));
 const NewMailTemplate = lazy(
   () => import("../pages/NewMailTemplate/NewMailTemplate")
+);
+const NewProfileTemplate = lazy(
+  () => import("../pages/NewProfileTemplate/NewProfileTemplate")
 );
 const Messages = lazy(() => import("../pages/Messages/Messages"));
 const Profile = lazy(() => import("../pages/Profile/Profile"));
@@ -46,6 +49,11 @@ export function PageRouter({ routerParams = {} }) {
     profile: (
       <Suspense fallback={<Loading />}>
         <Profile />
+      </Suspense>
+    ),
+    newProfileTemplate: (
+      <Suspense fallback={<Loading />}>
+        <NewProfileTemplate />
       </Suspense>
     ),
     themes: (

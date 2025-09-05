@@ -80,6 +80,12 @@ const MailTemplate: FC<MailTemplateProps> = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
+  // A single callback to handle staging any type of media
+  const handleMediaStaged = (mediaId: string, file: File, blobUrl: string) => {
+    setStagedMedia(prev => new Map(prev).set(mediaId, { file, blobUrl }));
+    console.log("Media staged:", { mediaId, name: file.name, blobUrl });
+  };
+
   const isFormValid = () => {
     // is there any validation that failed?
     for (const entry in validationState) {
@@ -99,12 +105,6 @@ const MailTemplate: FC<MailTemplateProps> = () => {
     if (!isFormValid()) {
       setValidationState(initialValidationState);
     }
-  };
-
-  // A single callback to handle staging any type of media
-  const handleMediaStaged = (mediaId: string, file: File, blobUrl: string) => {
-    setStagedMedia(prev => new Map(prev).set(mediaId, { file, blobUrl }));
-    console.log("Media staged:", { mediaId, name: file.name, blobUrl });
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -310,10 +310,10 @@ const MailTemplate: FC<MailTemplateProps> = () => {
           </div>
 
           <div className="buttons">
-            <Button className="cancel" onClick={handleCancel}>
+            <Button variant="cancel" size="small" onClick={handleCancel}>
               Cancel
             </Button>
-            <Button className="submit" onClick={() => handleSubmit}>
+            <Button variant="light" size="small" onClick={() => handleSubmit}>
               Save
             </Button>
           </div>

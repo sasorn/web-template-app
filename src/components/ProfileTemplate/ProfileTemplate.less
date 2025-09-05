@@ -1,0 +1,50 @@
+.ProfileTemplate {
+  max-width: 850px;
+  margin: 0 16px;
+
+  &-header {
+    h4 {
+      font-size: 20px;
+      line-height: 28px;
+      font-weight: 500;
+      margin: 12px 0;
+    }
+  }
+
+  &-radio {
+    border: 1px solid var(--border-primary-color);
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    display: grid;
+    grid-template-columns: 25% 1fr;
+    column-gap: 24px;
+    row-gap: 16px;
+  }
+
+  &-Compensation {
+    border: 1px solid var(--border-primary-color);
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+
+    p {
+      margin: 0 0 16px;
+    }
+
+    > div {
+      display: grid;
+      grid-template-columns: 150px 150px 100px 125px;
+      column-gap: 10px;
+      justify-content: start;
+    }
+  }
+
+  .buttons {
+    flex: 0 0 calc(100% - 6px);
+    display: flex;
+    justify-content: flex-end;
+    gap: 24px;
+    margin-bottom: 50px;
+  }
+}

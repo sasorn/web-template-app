@@ -73,7 +73,7 @@
             background-color: var(--background-color-light);
 
             &:hover {
-              background-color: #fff;
+              background-color: var(--background-color);
             }
           }
         }
@@ -84,66 +84,6 @@
         display: flex;
         justify-content: flex-end;
         gap: 24px;
-
-        .Button {
-          border: 0 none;
-          min-height: 32px;
-          color: var(--text-color);
-          border-radius: 8px;
-          font-size: 14px;
-
-          &.cancel {
-            background-color: rgba(247, 247, 247, 1);
-
-            &:hover,
-            &:active {
-              background-color: rgba(223, 223, 223, 1);
-            }
-          }
-
-          &.submit {
-            background-color: rgba(185, 231, 197, 1);
-
-            &:hover,
-            &:active {
-              background-color: rgba(162, 210, 175, 1);
-            }
-          }
-        }
-      }
-
-      .InputText {
-        background-color: var(--background-color-light);
-        border: 0.33px solid var(--border-input-color);
-
-        .InputText {
-          border: 0 none;
-        }
-      }
-
-      .InputDropdown {
-        &-select {
-          &-option {
-            background-color: var(--background-color-light);
-            border: 0.33px solid var(--border-input-color);
-          }
-
-          &-list {
-            border-width: 0.33px;
-            border-color: var(--border-input-color);
-          }
-
-          &-list-option {
-            background-color: var(--background-color-light);
-            border-width: 0.33px;
-            border-color: var(--border-input-color);
-
-            &.selected,
-            &:hover {
-              background-color: var(--hover-color);
-            }
-          }
-        }
       }
     }
 
@@ -188,7 +128,7 @@
       gap: 8px;
       padding: 10px;
       border-radius: 12px;
-      background-color: #fff;
+      background-color: var(--background-color);
       word-wrap: break-word;
       border: 1px solid var(--border-primary-color);
       overflow-y: auto;

@@ -1,0 +1,91 @@
+.BasicInformation {
+  h4 {
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 500;
+    margin: 28px 0 24px;
+  }
+
+  &-form {
+    border: 1px solid var(--border-primary-color);
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  &-two {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+
+    .InputText,
+    .InputDropdown {
+      flex: 1;
+    }
+  }
+
+  &-short {
+    width: 420px;
+    margin-bottom: 12px;
+  }
+
+  &-full {
+    display: flex;
+    gap: 10px;
+
+    .Button {
+      max-height: 50px;
+      margin-top: auto;
+    }
+  }
+}
+
+.tag-editor {
+  flex: 1;
+  min-height: 24px;
+  padding: 11px 16px;
+  border-radius: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  border: 1px solid var(--border-primary-color);
+  background-color: var(--background-color-light);
+  white-space: pre-wrap;
+  cursor: text;
+  gap: 4px;
+
+  .tag {
+    gap: 4px;
+    cursor: grab;
+    display: flex;
+    align-items: center;
+    background-color: var(--background-tag-color);
+    border-radius: 16px;
+    padding: 4px 12px;
+    overflow: hidden;
+
+    .delete,
+    .delete > img {
+      height: 16px;
+      width: 16px;
+      display: block;
+      cursor: pointer;
+    }
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    &-input {
+      line-height: 24px;
+
+      &:empty:before {
+        content: "Tags";
+        color: var(--text-color);
+        pointer-events: none;
+      }
+
+      &:focus:empty:before {
+        color: var(--border-primary-color);
+      }
+    }
+  }
+}

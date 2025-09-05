@@ -7,6 +7,7 @@ export const routes = {
   newMailTemplate: "templates/newMailTemplate",
   messages: "templates/messages",
   profile: "templates/profile",
+  newProfileTemplate: "templates/profile/newProfileTemplate",
   themes: "templates/themes",
   help: "help",
   settings: "settings",
