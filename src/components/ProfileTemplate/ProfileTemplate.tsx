@@ -5,6 +5,8 @@ import Skills from "../Skills/Skills";
 import InputRadio from "../InputRadio/InputRadio";
 import InputText from "../InputText/InputText";
 import InputDropdown from "../InputDropdown/InputDropdown";
+import SortSkills from "../SortSkills/SortSkills";
+import Button from "../Button/Button";
 
 import "./ProfileTemplate.less";
 
@@ -50,6 +52,7 @@ const ProfileTemplate: FC = () => {
   const [maxSalary, setMaxSalary] = useState<string>("");
   const [currency, setCurrency] = useState<string>("DKK");
   const [duration, setDuration] = useState<string>("Monthly");
+  const [skills, setSkills] = useState<string[]>([]);
 
   const [validationState, setValidationState] = useState(
     initialValidationState
@@ -124,6 +127,11 @@ const ProfileTemplate: FC = () => {
       ...prevRequirements,
       [label]: value
     }));
+  };
+
+  const handleSkillsChange = (updatedSkills: string[]) => {
+    setSkills(updatedSkills);
+    console.log("Skills updated in parent:", updatedSkills);
   };
 
   return (
@@ -242,6 +250,26 @@ const ProfileTemplate: FC = () => {
             valid={!!bonus[option.label]}
           />
         ))}
+      </div>
+
+      <div className="ProfileTemplate-header">
+        <h4>Other benefits</h4>
+      </div>
+
+      <SortSkills
+        onSkillsChange={handleSkillsChange}
+        placeholder={"Start by adding new benefit"}
+        buttonText={"Add benefit"}
+        label={"Add new benefit"}
+      />
+
+      <div className="buttons">
+        <Button variant="cancel" size="small" onClick={() => {}}>
+          Cancel
+        </Button>
+        <Button variant="light" size="small" onClick={() => {}}>
+          Save
+        </Button>
       </div>
     </div>
   );

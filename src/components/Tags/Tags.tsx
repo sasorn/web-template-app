@@ -14,6 +14,7 @@ interface TagsProps {
   onMoveTag?: (tag: string, originId: string, destId: string) => void;
   showContainer?: boolean;
   showPlaceholder?: boolean;
+  placeholder: string;
 }
 
 const Tags: FC<TagsProps> = ({
@@ -24,7 +25,8 @@ const Tags: FC<TagsProps> = ({
   onMoveTag,
   containerId,
   showContainer = true,
-  showPlaceholder = true
+  showPlaceholder = true,
+  placeholder
 }) => {
   const inputRef = useRef<HTMLSpanElement | null>(null);
   const wasFocusedRef = useRef<boolean>(false);
@@ -214,7 +216,7 @@ const Tags: FC<TagsProps> = ({
               suppressContentEditableWarning
               onKeyDown={handleKeyDown}
               onInput={handleInput}
-              aria-label="Add tag"
+              data-placeholder={placeholder}
               role="textbox"
               style={{ outline: "none", minWidth: "1ch" }}
             />

@@ -148,6 +148,7 @@ const BasicInformation: FC<BasicInformationProps> = ({
             onMoveTag={onMoveTag}
             containerId="basic"
             showPlaceholder={false}
+            placeholder={"Tags"}
           />
         </div>
       </div>

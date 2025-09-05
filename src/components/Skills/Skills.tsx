@@ -47,12 +47,13 @@ const Skills: FC<SkillsProps> = ({
         onMoveTag={onMoveTag}
         containerId={containerId}
         showContainer={showAddInput}
+        placeholder={"Skills"}
       />
 
       <div className="Skills-buttons">
         {showAddInput ? (
           <Button variant="cancel" size="small" onClick={handleHideInput}>
-            Cancel
+            Close
           </Button>
         ) : (
           <Button variant="light" size="small" onClick={handleShowInput}>
